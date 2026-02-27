@@ -1,66 +1,68 @@
 # STACloudMultiEgg
 
-> Docker images và Pterodactyl Egg hỗ trợ nhiều phiên bản Python, được xây dựng bởi **STACloud**.
+Bộ sưu tập Docker image dành cho hệ thống Egg của Pterodactyl, được xây dựng và duy trì bởi **STACloud**. Mỗi image được rebuild định kỳ để đảm bảo các dependencies luôn được cập nhật mới nhất.
+
+Các image được host trên `ghcr.io` tại namespace `trolyamazon/yolks`. Logic phân loại image như sau:
+
+- **yolks** — các image tổng quát cho phép nhiều loại ứng dụng hoặc script chạy được. Thường là một phiên bản cụ thể của một phần mềm (ví dụ: Python), giúp các Egg trong Pterodactyl có thể hoán đổi runtime linh hoạt.
+
+Tất cả image hỗ trợ cả `linux/amd64` và `linux/arm64`. Để sử dụng trên hệ thống arm64, không cần chỉnh sửa gì — dùng tag như bình thường là được.
 
 ---
 
-## Giới thiệu
+## Đóng góp
 
-**STACloudMultiEgg** cung cấp các Docker image Alpine nhẹ và một Pterodactyl Egg (`PythonGeneric.json`) để chạy ứng dụng Python trên [Pterodactyl Panel](https://pterodactyl.io/).  
-Hỗ trợ đầy đủ từ Python **2.7** đến Python **3.14**, bao gồm các bản đang được bảo trì và bản pre-release.
-
----
-
-## Docker Images
-
-Tất cả image được publish tại `ghcr.io/sunshroomchan/publicdork` và dựa trên Alpine Linux.
-
-| Tag | Phiên bản | Trạng thái |
-|-----|-----------|------------|
-| `python_2.7` | Python 2.7 | End-of-Life (EOL) |
-| `python_3.7` | Python 3.7 | End-of-Life (EOL) |
-| `python_3.8` | Python 3.8 | End-of-Life (EOL) |
-| `python_3.9` | Python 3.9 | Security fixes only |
-| `python_3.10` | Python 3.10 | Security fixes only |
-| `python_3.11` | Python 3.11 | Active |
-| `python_3.12` | Python 3.12 | Active |
-| `python_3.13` | Python 3.13 | Active |
-| `python_3.14` | Python 3.14 | Pre-release |
-
-### Phần mềm được cài sẵn trong mỗi image
-
-- `cmake`, `make`, `gcc`, `g++`
-- `git`, `curl`, `openssl`, `sqlite`
-- `ffmpeg`, `ca-certificates`, `tzdata`, `tar`
-- User không có quyền root: `container` (`/home/container`)
+Khi thêm một phiên bản mới vào image có sẵn (ví dụ: python 3.15), hãy tạo thư mục con tương ứng, ví dụ `python/3.15/Dockerfile`. Đồng thời cập nhật file workflow trong `.github/workflows/` để đảm bảo phiên bản mới được tag đúng cách.
 
 ---
 
-## Pterodactyl Egg
+## Danh sách Image
 
-File `PythonGeneric.json` là egg sẵn sàng import vào Pterodactyl Panel.
+### [Python](python)
 
-### Cách import egg
+| Phiên bản | Image | Trạng thái |
+|-----------|-------|------------|
+| Python 2.7 | `ghcr.io/trolyamazon/yolks:python_2.7` | End-of-Life (EOL) |
+| Python 3.7 | `ghcr.io/trolyamazon/yolks:python_3.7` | End-of-Life (EOL) |
+| Python 3.8 | `ghcr.io/trolyamazon/yolks:python_3.8` | End-of-Life (EOL) |
+| Python 3.9 | `ghcr.io/trolyamazon/yolks:python_3.9` | Chỉ vá bảo mật |
+| Python 3.10 | `ghcr.io/trolyamazon/yolks:python_3.10` | Chỉ vá bảo mật |
+| Python 3.11 | `ghcr.io/trolyamazon/yolks:python_3.11` | Đang hỗ trợ |
+| Python 3.12 | `ghcr.io/trolyamazon/yolks:python_3.12` | Đang hỗ trợ |
+| Python 3.13 | `ghcr.io/trolyamazon/yolks:python_3.13` | Đang hỗ trợ |
+| Python 3.14 | `ghcr.io/trolyamazon/yolks:python_3.14` | Pre-release |
+
+---
+
+## Egg Generic
+
+### [Python](python)
+
+[python](https://www.python.org/)
+
+Pterodactyl Egg tổng quát cho Python — hỗ trợ chạy ứng dụng Python từ Git repo hoặc file tự upload. Tương thích với mọi phiên bản image liệt kê ở trên.
+
+#### Cách import Egg
 
 1. Đăng nhập vào **Admin Panel** của Pterodactyl.
 2. Vào **Nests** → chọn hoặc tạo một Nest mới.
 3. Nhấn **Import Egg** và upload file `PythonGeneric.json`.
 
-### Biến môi trường
+#### Biến môi trường
 
 | Biến | Mô tả | Mặc định |
 |------|-------|----------|
 | `PY_FILE` | File Python khởi động ứng dụng | `app.py` |
-| `PY_PACKAGES` | Các package Python bổ sung (cách nhau bằng dấu cách) | _(trống)_ |
+| `PY_PACKAGES` | Package Python bổ sung (cách nhau bằng dấu cách) | _(trống)_ |
 | `REQUIREMENTS_FILE` | Tên file requirements | `requirements.txt` |
 | `GIT_ADDRESS` | URL Git repo cần clone | _(trống)_ |
 | `BRANCH` | Branch cần clone (để trống = branch mặc định) | _(trống)_ |
-| `USERNAME` | Tên đăng nhập Git (cho repo private) | _(trống)_ |
-| `ACCESS_TOKEN` | Personal Access Token Git (cho repo private) | _(trống)_ |
-| `USER_UPLOAD` | Bỏ qua bước cài đặt nếu tự upload file (`0`/`1`) | `0` |
+| `USERNAME` | Tên đăng nhập Git (repo private) | _(trống)_ |
+| `ACCESS_TOKEN` | Personal Access Token Git (repo private) | _(trống)_ |
+| `USER_UPLOAD` | Bỏ qua cài đặt nếu tự upload file (`0`/`1`) | `0` |
 | `AUTO_UPDATE` | Tự động `git pull` khi khởi động (`0`/`1`) | `0` |
 
-### Lệnh khởi động mặc định
+#### Lệnh khởi động mặc định
 
 ```bash
 if [[ -d .git ]] && [[ "{{AUTO_UPDATE}}" == "1" ]]; then git pull; fi
@@ -71,44 +73,7 @@ if [[ -f /home/container/${REQUIREMENTS_FILE} ]]; then pip install -U --prefix .
 
 ---
 
-## Cấu trúc thư mục
-
-```
-STACloudMultiEgg/
-├── PythonGeneric.json       # Pterodactyl Egg
-└── python/
-    ├── entrypoint.sh        # Script khởi động container
-    ├── 2.7/Dockerfile
-    ├── 3.7/Dockerfile
-    ├── 3.8/Dockerfile
-    ├── 3.9/Dockerfile
-    ├── 3.10/Dockerfile
-    ├── 3.11/Dockerfile
-    ├── 3.12/Dockerfile
-    ├── 3.13/Dockerfile
-    └── 3.14/Dockerfile
-```
-
----
-
-## Build image thủ công
-
-```bash
-# Ví dụ build image Python 3.12
-cd python/3.12
-docker build -t my-python:3.12 .
-```
-
----
-
 ## Giấy phép
 
 Dự án này được cấp phép theo [MIT License](LICENSE).  
 Docker image dựa trên công việc gốc của [Matthew Penner](https://github.com/matthewpi) từ [pterodactyl/yolks](https://github.com/pterodactyl/yolks).
-
----
-
-## Liên hệ
-
-- **Tác giả**: STACloud — admin@stacloud.vn
-- **GitHub**: [sunshroomchan/publicdork](https://github.com/sunshroomchan/publicdork)
