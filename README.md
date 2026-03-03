@@ -32,6 +32,13 @@ Khi thêm một phiên bản mới vào image có sẵn (ví dụ: python 3.15),
 | Python 3.13 | `ghcr.io/trolyamazon/yolks:python_3.13` | Đang hỗ trợ |
 | Python 3.14 | `ghcr.io/trolyamazon/yolks:python_3.14` | Pre-release |
 
+### [Bun](bun)
+
+| Phiên bản | Image | Trạng thái |
+|-----------|-------|------------|
+| Bun Latest | `ghcr.io/trolyamazon/yolks:bun_latest` | Đang hỗ trợ |
+| Bun Canary | `ghcr.io/trolyamazon/yolks:bun_canary` | Canary (không ổn định) |
+
 ---
 
 ## Egg Generic
@@ -69,6 +76,40 @@ if [[ -d .git ]] && [[ "{{AUTO_UPDATE}}" == "1" ]]; then git pull; fi
 if [[ ! -z "{{PY_PACKAGES}}" ]]; then pip install -U --prefix .local {{PY_PACKAGES}}; fi
 if [[ -f /home/container/${REQUIREMENTS_FILE} ]]; then pip install -U --prefix .local -r ${REQUIREMENTS_FILE}; fi
 /usr/local/bin/python /home/container/{{PY_FILE}}
+```
+
+---
+
+### [Bun](bun)
+
+[bun](https://bun.sh/)
+
+Pterodactyl Egg tổng quát cho Bun — hỗ trợ chạy ứng dụng JavaScript/TypeScript từ Git repo hoặc file tự upload. Tự động chạy `bun install` nếu có `package.json`.
+
+#### Cách import Egg
+
+1. Đăng nhập vào **Admin Panel** của Pterodactyl.
+2. Vào **Nests** → chọn hoặc tạo một Nest mới.
+3. Nhấn **Import Egg** và upload file `BunGeneric.json`.
+
+#### Biến môi trường
+
+| Biến | Mô tả | Mặc định |
+|------|-------|----------|
+| `MAIN_FILE` | File hoặc script khởi động ứng dụng | `index.js` |
+| `GIT_ADDRESS` | URL Git repo cần clone | _(trống)_ |
+| `BRANCH` | Branch cần clone (để trống = branch mặc định) | _(trống)_ |
+| `USERNAME` | Tên đăng nhập Git (repo private) | _(trống)_ |
+| `ACCESS_TOKEN` | Personal Access Token Git (repo private) | _(trống)_ |
+| `USER_UPLOAD` | Bỏ qua cài đặt nếu tự upload file (`0`/`1`) | `0` |
+| `AUTO_UPDATE` | Tự động `git pull` khi khởi động (`0`/`1`) | `0` |
+
+#### Lệnh khởi động mặc định
+
+```bash
+if [[ -d .git ]] && [[ "{{AUTO_UPDATE}}" == "1" ]]; then git pull; fi
+if [ -f package.json ]; then bun install; fi
+bun run "{{MAIN_FILE}}"
 ```
 
 ---
