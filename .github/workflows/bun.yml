@@ -8,13 +8,13 @@ on:
       - master
     paths:
       - bun/**
-permissions:
-  packages: write
-
 jobs:
   push:
     name: "yolks:bun_${{ matrix.tag }}"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +35,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ steps.lower-repo.outputs.repository }}
-          password: ${{ secrets.REGISTRY_TOKEN || secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.REGISTRY_TOKEN != '' && secrets.REGISTRY_TOKEN || secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v6
         with:
           context: ./bun
