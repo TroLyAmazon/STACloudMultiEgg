@@ -1,0 +1,19 @@
+
+
+FROM        --platform=$TARGETOS/$TARGETARCH oven/bun:latest
+
+LABEL       author="trolyamazon" maintainer="congdongamazon@gmail.com"
+
+LABEL       org.opencontainers.image.source="https://github.com/trolyamazon/yolks"
+LABEL       org.opencontainers.image.licenses=MIT
+
+RUN         apt-get update -y \
+	&& apt-get install -y bash cmake make ca-certificates curl ffmpeg g++ gcc gettext git openssl sqlite3 tar tzdata \
+	&& useradd -d /home/container -m container
+
+USER        container
+ENV         USER=container HOME=/home/container
+WORKDIR     /home/container
+
+COPY        ./../entrypoint.sh /entrypoint.sh
+CMD         [ "/bin/bash", "/entrypoint.sh" ]
