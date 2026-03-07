@@ -7,8 +7,11 @@ LABEL       author="STACloud" maintainer="congdongamazon@gmail.com"
 LABEL       org.opencontainers.image.source="https://github.com/STA-Cloud-Dev/STACloudMultiEgg"
 LABEL       org.opencontainers.image.licenses=MIT
 
+ENV         DEBIAN_FRONTEND=noninteractive TZ=UTC
+
 RUN         apt-get update -y \
-	&& apt-get install -y bash cmake make ca-certificates curl ffmpeg g++ gcc gettext git openssl sqlite3 tar tzdata \
+	&& apt-get install -y --no-install-recommends bash cmake make ca-certificates curl ffmpeg g++ gcc gettext git openssl sqlite3 tar tzdata \
+	&& rm -rf /var/lib/apt/lists/* \
 	&& useradd -d /home/container -m container
 
 USER        container
