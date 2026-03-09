@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:13-jre-jammy
+FROM        --platform=$TARGETOS/$TARGETARCH azul/zulu-openjdk:13-jre
 
 LABEL       author="STACloud" maintainer="congdongamazon@gmail.com"
 
