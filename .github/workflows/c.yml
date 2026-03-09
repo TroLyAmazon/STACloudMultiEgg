@@ -11,13 +11,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tag:
-          - 8
-          - 7
-          - 6
-          - 5
-          - '3.1'
-          - '2.1'
+        include:
+          - tag: 8
+            platforms: linux/amd64,linux/arm64
+          - tag: 7
+            platforms: linux/amd64,linux/arm64
+          - tag: 6
+            platforms: linux/amd64,linux/arm64
+          - tag: 5
+            platforms: linux/amd64,linux/arm64
+          - tag: '3.1'
+            platforms: linux/amd64,linux/arm64
+          - tag: '2.1'
+            platforms: linux/amd64
     steps:
       - uses: actions/checkout@v4
       - name: Set registry prefix (lowercase)
@@ -38,7 +44,7 @@ jobs:
         with:
           context: ./c
           file: ./c/${{ matrix.tag }}/Dockerfile
-          platforms: linux/amd64, linux/arm64
+          platforms: ${{ matrix.platforms }}
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max

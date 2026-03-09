@@ -16,9 +16,8 @@ printf "\033[1m\033[33mstacloud@deverlopment~ \033[0mdotnet --version\n"
 dotnet --version
 
 # Convert all of the "{{VARIABLE}}" parts of the command into the expected shell
-# variable format of "${VARIABLE}" before evaluating the string and automatically
-# replacing the values.
-PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | envsubst)
+# variable format of "${VARIABLE}" before evaluating the string in a shell.
+PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
 
 # Display the command we're running in the output, and then execute it with the env
 # from the container itself.
