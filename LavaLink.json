@@ -4,13 +4,16 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2026-03-08T00:00:00+00:00",
+    "exported_at": "2026-03-10T00:00:00+00:00",
     "name": "LavaLink",
     "author": "congdongamazon@gmail.com",
     "uuid": "5b0407f5-bcc9-4b77-bc13-4325ff2e7b1e",
-    "description": "Egg Lavalink cho STACloud, cai dat tu GitHub releases va chay bang Java 21.",
+    "description": "Egg Lavalink cho STACloud, cai dat tu GitHub releases va ho tro chay bang Java 11, 13, 17, 21.",
     "features": null,
     "docker_images": {
+        "Java 11": "ghcr.io/sta-cloud-dev/deverlopment:java_11",
+        "Java 13": "ghcr.io/sta-cloud-dev/deverlopment:java_13",
+        "Java 17": "ghcr.io/sta-cloud-dev/deverlopment:java_17",
         "Java 21": "ghcr.io/sta-cloud-dev/deverlopment:java_21"
     },
     "file_denylist": [],
