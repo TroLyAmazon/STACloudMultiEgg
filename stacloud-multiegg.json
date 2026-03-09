@@ -17,7 +17,7 @@
     ],
     "startup": "bash /opt/stacloud/t.sh",
     "config": {
-        "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
+        "files": "{\n    \"server.properties\": {\n        \"parser\": \"properties\",\n        \"find\": {\n            \"server-ip\": \"0.0.0.0\",\n            \"server-port\": \"{{server.build.default.port}}\",\n            \"motd\": \"{{env.SERVER_MOTD}}\",\n            \"max-players\": \"{{env.MAX_PLAYERS}}\",\n            \"online-mode\": \"{{env.ONLINE_MODE}}\",\n            \"pvp\": \"{{env.PVP}}\",\n            \"hardcore\": \"{{env.HARDCORE}}\",\n            \"allow-flight\": \"{{env.ALLOW_FLIGHT}}\",\n            \"difficulty\": \"{{env.DIFFICULTY}}\",\n            \"gamemode\": \"{{env.GAMEMODE}}\",\n            \"view-distance\": \"{{env.VIEW_DISTANCE}}\",\n            \"simulation-distance\": \"{{env.SIMULATION_DISTANCE}}\",\n            \"spawn-protection\": \"{{env.SPAWN_PROTECTION}}\",\n            \"enable-command-block\": \"{{env.ENABLE_COMMAND_BLOCK}}\"\n        }\n    }\n}",
         "startup": "{\r\n    \"done\": \"Done\",\r\n    \"userInteraction\": [\r\n        \"Go to eula.txt for more info.\"\r\n    ]\r\n}",
         "logs": "{\r\n    \"custom\": false,\r\n    \"location\": \"logs/latest.log\"\r\n}",
         "stop": "stop"
@@ -31,8 +31,8 @@
     },
     "variables": [
         {
-            "name": "Bật menu chọn game (Console)",
-            "description": "1 = bật menu chọn game khi start server (giống ảnh). 0 = tắt menu và chạy theo SERVER_FLAVOR/SERVER_TYPE nếu có.",
+            "name": "Enable launcher menu",
+            "description": "1 = show the console menu on startup. 0 = skip the menu and use the variables below directly.",
             "env_variable": "MULTIEGG_INTERACTIVE",
             "default_value": "1",
             "user_viewable": true,
@@ -41,8 +41,28 @@
             "field_type": "text"
         },
         {
-            "name": "Phiên bản Minecraft",
-            "description": "Phiên bản Minecraft cần tải.\r\n\r\nĐể latest để luôn lấy bản mới nhất. Nếu nhập sai sẽ tự chuyển về latest.",
+            "name": "Server flavor",
+            "description": "Choose which launcher path to run when MULTIEGG_INTERACTIVE=0. Supported: java, bedrock, proxy.",
+            "env_variable": "SERVER_FLAVOR",
+            "default_value": "java",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:java,bedrock,proxy",
+            "field_type": "text"
+        },
+        {
+            "name": "Java project",
+            "description": "Java server software when SERVER_FLAVOR=java. Supported: paper, folia, purpur, leaf, canvas, forge, fabric, mohist.",
+            "env_variable": "PROJECT",
+            "default_value": "paper",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:paper,folia,purpur,leaf,canvas,forge,fabric,mohist",
+            "field_type": "text"
+        },
+        {
+            "name": "Minecraft version",
+            "description": "Minecraft version for Java server installs. Examples: latest, 1.21.11, 1.20.6. Invalid values fall back to the launcher selection flow.",
             "env_variable": "MINECRAFT_VERSION",
             "default_value": "latest",
             "user_viewable": true,
@@ -51,38 +71,28 @@
             "field_type": "text"
         },
         {
-            "name": "Tên file Server Jar",
-            "description": "Tên file jar dùng để chạy server.",
+            "name": "Java version override",
+            "description": "Optional override for Java runtime. Leave empty to auto-map from Minecraft version. Allowed: 8, 11, 17, 21, 25.",
+            "env_variable": "JAVA_VERSION",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|in:8,11,17,21,25",
+            "field_type": "text"
+        },
+        {
+            "name": "Server jar file",
+            "description": "Jar filename used by Java servers.",
             "env_variable": "SERVER_JARFILE",
             "default_value": "server.jar",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|max:20",
+            "rules": "required|string|max:64",
             "field_type": "text"
         },
         {
-            "name": "Đường dẫn tải xuống",
-            "description": "URL dùng để tải server.jar thay cho script cài đặt mặc định. Biến này không hiển thị cho người dùng.",
-            "env_variable": "DL_PATH",
-            "default_value": "",
-            "user_viewable": false,
-            "user_editable": false,
-            "rules": "nullable|string",
-            "field_type": "text"
-        },
-        {
-            "name": "Số build",
-            "description": "Số build cho bản phát hành Paper.\r\n\r\nĐể latest để luôn lấy build mới nhất. Nếu nhập sai sẽ tự chuyển về latest.",
-            "env_variable": "BUILD_NUMBER",
-            "default_value": "latest",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:20",
-            "field_type": "text"
-        },
-        {
-            "name": "Tham số Java",
-            "description": "Tham số Java khi khởi chạy. Mặc định cho server mới là java -jar ${SERVER_JARFILE}.",
+            "name": "Java arguments",
+            "description": "Arguments appended after java for Java servers. Default launches the selected jar directly.",
             "env_variable": "JAVA_ARGUMENTS",
             "default_value": "-jar ${SERVER_JARFILE}",
             "user_viewable": true,
@@ -91,8 +101,138 @@
             "field_type": "text"
         },
         {
-            "name": "Phiên bản Minecraft Bedrock",
-            "description": "Dùng cho lựa chọn Minecraft BDS.\r\n- stable/latest: bản stable mới nhất\r\n- preview: bản preview mới nhất\r\n- hoặc nhập số version cụ thể (ví dụ 1.26.2.1)",
+            "name": "Server MOTD",
+            "description": "Value written to server.properties -> motd.",
+            "env_variable": "SERVER_MOTD",
+            "default_value": "A STACloud Minecraft Server",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:120",
+            "field_type": "text"
+        },
+        {
+            "name": "Max players",
+            "description": "Value written to server.properties -> max-players.",
+            "env_variable": "MAX_PLAYERS",
+            "default_value": "20",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:1|max:1000",
+            "field_type": "text"
+        },
+        {
+            "name": "Online mode",
+            "description": "Value written to server.properties -> online-mode. Use true for premium-authenticated servers.",
+            "env_variable": "ONLINE_MODE",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "PVP",
+            "description": "Value written to server.properties -> pvp.",
+            "env_variable": "PVP",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Hardcore",
+            "description": "Value written to server.properties -> hardcore.",
+            "env_variable": "HARDCORE",
+            "default_value": "false",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Allow flight",
+            "description": "Value written to server.properties -> allow-flight.",
+            "env_variable": "ALLOW_FLIGHT",
+            "default_value": "false",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Difficulty",
+            "description": "Value written to server.properties -> difficulty. Allowed: peaceful, easy, normal, hard.",
+            "env_variable": "DIFFICULTY",
+            "default_value": "easy",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:peaceful,easy,normal,hard",
+            "field_type": "text"
+        },
+        {
+            "name": "Gamemode",
+            "description": "Value written to server.properties -> gamemode. Allowed: survival, creative, adventure, spectator.",
+            "env_variable": "GAMEMODE",
+            "default_value": "survival",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:survival,creative,adventure,spectator",
+            "field_type": "text"
+        },
+        {
+            "name": "View distance",
+            "description": "Value written to server.properties -> view-distance.",
+            "env_variable": "VIEW_DISTANCE",
+            "default_value": "10",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:2|max:32",
+            "field_type": "text"
+        },
+        {
+            "name": "Simulation distance",
+            "description": "Value written to server.properties -> simulation-distance.",
+            "env_variable": "SIMULATION_DISTANCE",
+            "default_value": "10",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:2|max:32",
+            "field_type": "text"
+        },
+        {
+            "name": "Spawn protection",
+            "description": "Value written to server.properties -> spawn-protection.",
+            "env_variable": "SPAWN_PROTECTION",
+            "default_value": "16",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:0|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Enable command block",
+            "description": "Value written to server.properties -> enable-command-block.",
+            "env_variable": "ENABLE_COMMAND_BLOCK",
+            "default_value": "false",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Bedrock server type",
+            "description": "Mode used when SERVER_FLAVOR=bedrock. Supported: bds or pocketmine.",
+            "env_variable": "BEDROCK_SERVER_TYPE",
+            "default_value": "bds",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:bds,pocketmine",
+            "field_type": "text"
+        },
+        {
+            "name": "Bedrock version",
+            "description": "Bedrock Dedicated Server version. Use latest or stable for latest stable, preview for preview, or a specific version like 1.21.93.1.",
             "env_variable": "BEDROCK_VERSION",
             "default_value": "latest",
             "user_viewable": true,
@@ -101,13 +241,83 @@
             "field_type": "text"
         },
         {
-            "name": "Bedrock Versions Base URL",
-            "description": "Base URL metadata BDS, mặc định dùng Bedrock-OSS/BDS-Versions. Thường không cần đổi.",
+            "name": "Bedrock download URL",
+            "description": "Optional direct Bedrock server download URL. Useful if the node cannot reach the official download source.",
+            "env_variable": "BEDROCK_DOWNLOAD_URL",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "PMMP phar file",
+            "description": "PocketMine-MP phar filename when using BEDROCK_SERVER_TYPE=pocketmine.",
+            "env_variable": "PMMP_PHAR_FILE",
+            "default_value": "PocketMine-MP.phar",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "PMMP phar URL",
+            "description": "Optional PocketMine-MP phar download URL override.",
+            "env_variable": "PMMP_PHAR_URL",
+            "default_value": "https://github.com/pmmp/PocketMine-MP/releases/latest/download/PocketMine-MP.phar",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "PMMP PHP download URL",
+            "description": "Optional custom PHP runtime archive URL for PocketMine-MP. Leave empty to auto-detect from pmmp/PHP-Binaries.",
+            "env_variable": "PMMP_PHP_DOWNLOAD_URL",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Bedrock versions base URL",
+            "description": "Metadata source for Bedrock version lookup. Normally this should not be changed.",
             "env_variable": "BEDROCK_VERSIONS_BASE_URL",
             "default_value": "https://raw.githubusercontent.com/Bedrock-OSS/BDS-Versions/main",
             "user_viewable": false,
             "user_editable": false,
-            "rules": "nullable|string|max:200",
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Proxy type",
+            "description": "Proxy software when SERVER_FLAVOR=proxy. Supported: velocity or bungeecord.",
+            "env_variable": "PROXY_TYPE",
+            "default_value": "velocity",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:velocity,bungeecord",
+            "field_type": "text"
+        },
+        {
+            "name": "Proxy jar file",
+            "description": "Jar filename used by proxy servers.",
+            "env_variable": "PROXY_JARFILE",
+            "default_value": "proxy.jar",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Proxy Java arguments",
+            "description": "Arguments appended after java for proxy startup.",
+            "env_variable": "PROXY_JAVA_ARGUMENTS",
+            "default_value": "-jar ${PROXY_JARFILE}",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:500",
             "field_type": "text"
         }
     ]
