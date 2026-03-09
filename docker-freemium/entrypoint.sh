@@ -95,16 +95,32 @@ ensure_java() {
   export PATH="${JAVA_HOME}/bin:${PATH}"
 }
 
+version_gte() {
+  local left="$1"
+  local right="$2"
+  [[ "$(printf '%s\n' "$right" "$left" | sort -V | head -n 1)" == "$right" ]]
+}
+
+map_java_from_minecraft_version() {
+  local mc_version="$1"
+
+  if version_gte "${mc_version}" "1.21.11"; then
+    echo "25"
+  elif version_gte "${mc_version}" "1.20.5"; then
+    echo "21"
+  elif version_gte "${mc_version}" "1.17"; then
+    echo "17"
+  else
+    echo "8"
+  fi
+}
+
 select_java() {
   local requested="${JAVA_VERSION:-21}"
 
-  # Tự động suy luận theo phiên bản Minecraft nếu người dùng chưa set JAVA_VERSION.
+  # Auto-map Java from the selected Minecraft version when JAVA_VERSION is unset.
   if [[ -z "${JAVA_VERSION:-}" && -n "${MINECRAFT_VERSION:-}" ]]; then
-    case "${MINECRAFT_VERSION}" in
-      1.8* ) requested="8" ;;
-      1.12* ) requested="11" ;;
-      * ) requested="21" ;;
-    esac
+    requested="$(map_java_from_minecraft_version "${MINECRAFT_VERSION}")"
   fi
 
   case "${requested}" in
@@ -124,15 +140,15 @@ select_java() {
       ensure_java "25"
       ;;
     *)
-      log "JAVA_VERSION=${requested} không nằm trong [8,11,17,21,25]. Fallback về 21."
+      log "JAVA_VERSION=${requested} is not in [8,11,17,21,25]. Falling back to 21."
       ensure_java "21"
       ;;
   esac
 
   if command -v java >/dev/null 2>&1; then
-    log "Đang dùng Java: $(java -version 2>&1 | head -n 1)"
+    log "Using Java: $(java -version 2>&1 | head -n 1)"
   else
-    log "Không tìm thấy java trong PATH."
+    log "Could not find java in PATH."
     exit 1
   fi
 }

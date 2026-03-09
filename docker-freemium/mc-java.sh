@@ -138,7 +138,7 @@ version_gte() {
 map_java_from_minecraft_version() {
   local mc_version="$1"
 
-  if version_gte "${mc_version}" "1.26"; then
+  if version_gte "${mc_version}" "1.21.11"; then
     echo "25"
   elif version_gte "${mc_version}" "1.20.5"; then
     echo "21"
