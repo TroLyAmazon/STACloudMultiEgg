@@ -86,6 +86,12 @@ Khi thêm một phiên bản mới vào image có sẵn (ví dụ: python 3.15),
 | Nodejs 14 | `ghcr.io/sta-cloud-dev/deverlopment:nodejs_14` | End-of-Life (EOL) |
 | Nodejs 12 | `ghcr.io/sta-cloud-dev/deverlopment:nodejs_12` | End-of-Life (EOL) |
 
+### Golang
+
+| Phiên bản | Image | Trạng thái |
+|-----------|-------|------------|
+| Golang 1.24 | `ghcr.io/sta-cloud-dev/deverlopment:golang1.24` | Đang hỗ trợ |
+
 ---
 
 ## Egg Generic
@@ -246,6 +252,33 @@ Pterodactyl Egg tổng quát cho Nodejs — hỗ trợ chạy ứng dụng từ 
 
 ```bash
 if [ -d .git ] && [ "{{AUTO_UPDATE}}" = "1" ]; then git pull; fi; if [ -f package.json ]; then npm install; fi; node "{{JS_FILE}}"
+```
+
+---
+
+### Golang
+
+[golang](https://go.dev/)
+
+Pterodactyl Egg tổng quát cho Golang, dùng để tải package Go, build thành file thực thi, rồi chạy trực tiếp bằng executable đã build.
+
+#### Cách import Egg
+
+1. Đăng nhập vào **Admin Panel** của Pterodactyl.
+2. Vào **Nests** → chọn hoặc tạo một Nest mới.
+3. Nhấn **Import Egg** và upload file `GolangGeneric.json`.
+
+#### Biến môi trường
+
+| Biến | Mô tả | Mặc định |
+|------|-------|----------|
+| `GO_PACKAGE` | Go package cần tải và build | _(trống)_ |
+| `EXECUTABLE` | Tên file thực thi sau khi build | _(trống)_ |
+
+#### Lệnh khởi động mặc định
+
+```bash
+./${EXECUTABLE}
 ```
 
 ---

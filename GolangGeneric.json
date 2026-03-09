@@ -1,0 +1,53 @@
+{
+    "_comment": "KHONG CHINH SUA: TEP DUOC TAO BOI STACLOUD",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2026-03-09T00:00:00+00:00",
+    "name": "Golang Generic",
+    "author": "congdongamazon@gmail.com",
+    "uuid": "23520a9e-0711-4083-bad8-5601d635eb83",
+    "description": "Golang Generic Egg cho STACloud, dung de tai va build ung dung Go thanh file thuc thi.",
+    "features": null,
+    "docker_images": {
+        "Golang 1.24": "ghcr.io/sta-cloud-dev/deverlopment:golang1.24"
+    },
+    "file_denylist": [],
+    "startup": "./${EXECUTABLE}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"change this part\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# golang generic package\r\n\r\nif [ ! -d /mnt/server/ ]; then\r\n    mkdir -p /mnt/server/\r\nfi\r\n\r\nexport GOPATH=/mnt/server/go\r\nexport PATH=$PATH:/usr/local/go/bin:${GOPATH}/bin\r\ncd /mnt/server\r\n\r\ngo env -w GOPATH=${GOPATH}\r\n\r\ngo install ${GO_PACKAGE}@latest\r\n\r\nPACKAGE_NAME=$(basename ${GO_PACKAGE})\r\nif [ -f \"${GOPATH}/bin/${EXECUTABLE}\" ]; then\r\n    cp -f \"${GOPATH}/bin/${EXECUTABLE}\" /mnt/server/\r\nelif [ -f \"${GOPATH}/bin/${PACKAGE_NAME}\" ]; then\r\n    cp -f \"${GOPATH}/bin/${PACKAGE_NAME}\" \"/mnt/server/${EXECUTABLE}\"\r\nelse\r\n    echo \"Unable to locate built executable in ${GOPATH}/bin\"\r\n    exit 1\r\nfi",
+            "container": "golang:1.24-bookworm",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Go Package",
+            "description": "Go package to get and build",
+            "env_variable": "GO_PACKAGE",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Executable",
+            "description": "This is the executable from the build.",
+            "env_variable": "EXECUTABLE",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|string",
+            "field_type": "text"
+        }
+    ]
+}
