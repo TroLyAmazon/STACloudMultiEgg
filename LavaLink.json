@@ -11,10 +11,10 @@
     "description": "Egg Lavalink cho STACloud, cai dat tu GitHub releases va ho tro chay bang Java 11, 13, 17, 21.",
     "features": null,
     "docker_images": {
-        "Java 11": "ghcr.io/sta-cloud-dev/deverlopment:java_11",
-        "Java 13": "ghcr.io/sta-cloud-dev/deverlopment:java_13",
+        "Java 21": "ghcr.io/sta-cloud-dev/deverlopment:java_21",
         "Java 17": "ghcr.io/sta-cloud-dev/deverlopment:java_17",
-        "Java 21": "ghcr.io/sta-cloud-dev/deverlopment:java_21"
+        "Java 13": "ghcr.io/sta-cloud-dev/deverlopment:java_13",
+        "Java 11": "ghcr.io/sta-cloud-dev/deverlopment:java_11"
     },
     "file_denylist": [],
     "startup": "java -jar Lavalink.jar",
