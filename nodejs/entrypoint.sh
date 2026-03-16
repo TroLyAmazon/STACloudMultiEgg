@@ -2,7 +2,7 @@
 cd /home/container
 
 # Make internal Docker IP address available to processes.
-INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
+INTERNAL_IP=127.0.0.1
 export INTERNAL_IP
 
 # Print Node.js Version
