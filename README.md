@@ -290,7 +290,7 @@ Dự án này được cấp phép theo [MIT License](LICENSE).
 
 [OpenClaw](https://openclaw.ai/)
 
-Pterodactyl Egg cho OpenClaw Gateway dÃ¹ng image riÃªng, lÆ°u persistent state trong `/home/container/.openclaw`.
+Pterodactyl Egg cho OpenClaw Gateway, state trong /home/container/.openclaw.
 
 #### CÃ¡ch import Egg
 
