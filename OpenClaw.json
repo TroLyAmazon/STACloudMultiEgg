@@ -14,7 +14,7 @@
         "OpenClaw Latest": "ghcr.io/sta-cloud-dev/ai:openclaw_latest"
     },
     "file_denylist": [],
-    "startup": "mkdir -p /home/container/.openclaw /home/container/.openclaw/workspace /home/container/.openclaw/skills; export OPENCLAW_HOME=/home/container/.openclaw; export HOME=/home/container; EXTRA_ARGS=\"${OPENCLAW_ARGS}\"; if [ \"${OPENCLAW_VERBOSE}\" = \"true\" ]; then EXTRA_ARGS=\"${EXTRA_ARGS} --verbose\"; fi; if [ -n \"${OPENCLAW_GATEWAY_TOKEN}\" ]; then EXTRA_ARGS=\"${EXTRA_ARGS} --token ${OPENCLAW_GATEWAY_TOKEN}\"; fi; openclaw gateway --allow-unconfigured --bind ${OPENCLAW_BIND} --port {{server.build.default.port}} ${EXTRA_ARGS}",
+    "startup": "mkdir -p /home/container/.openclaw /home/container/.openclaw/workspace /home/container/.openclaw/skills; export OPENCLAW_HOME=/home/container/.openclaw; export HOME=/home/container; EXTRA_ARGS=\"${OPENCLAW_ARGS}\"; if [ \"${OPENCLAW_VERBOSE}\" = \"true\" ]; then EXTRA_ARGS=\"${EXTRA_ARGS} --verbose\"; fi; if [ -n \"${OPENCLAW_GATEWAY_TOKEN}\" ]; then EXTRA_ARGS=\"${EXTRA_ARGS} --token ${OPENCLAW_GATEWAY_TOKEN}\"; fi; openclaw gateway --allow-unconfigured --bind ${OPENCLAW_BIND} --port ${SERVER_PORT} ${EXTRA_ARGS}",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"listening on\"\r\n}",
