@@ -100,16 +100,6 @@
             "field_type": "text"
         },
         {
-            "name": "Telegram DM Policy",
-            "description": "Who can DM the Telegram bot. 'open' = anyone, 'pairing' = require approval, 'allowlist' = only allowlisted users.",
-            "env_variable": "TELEGRAM_DM_POLICY",
-            "default_value": "open",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|in:open,pairing,allowlist",
-            "field_type": "text"
-        },
-        {
             "description": "API key for Google Gemini models.",
             "env_variable": "GEMINI_API_KEY",
             "default_value": "",
@@ -306,6 +296,16 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Telegram DM Policy",
+            "description": "Who can DM the Telegram bot. 'open' = anyone, 'pairing' = require approval, 'allowlist' = only allowlisted users.",
+            "env_variable": "TELEGRAM_DM_POLICY",
+            "default_value": "open",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:open,pairing,allowlist",
             "field_type": "text"
         },
         {
