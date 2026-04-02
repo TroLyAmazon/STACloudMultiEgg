@@ -55,23 +55,40 @@ if [ "${OPENCLAW_BIND:-lan}" = "custom" ] && [ -n "${OPENCLAW_CUSTOM_BIND_HOST:-
   _CUSTOM=$(jq -n --arg h "${OPENCLAW_CUSTOM_BIND_HOST}" '{customBindHost:$h}')
 fi
 
-CONFIG_JSON=$(jq -n \
+OUR_GATEWAY=$(jq -n \
   --argjson gw "$_CONFIG_GATEWAY" \
   --argjson cui "$_CUI" \
   --argjson custom "$_CUSTOM" \
-  '{commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:($gw + $cui + $custom + {trustedProxies:["private-ranges"]})}')
+  '$gw + $cui + $custom + {trustedProxies:["private-ranges"]}')
+
+OUR_CONFIG=$(jq -n \
+  --argjson gw "$OUR_GATEWAY" \
+  '{commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:$gw}')
 
 # --- Ensure env vars are set ---
 export HOME=/home/container
 export OPENCLAW_HOME=/home/container
 export XDG_CONFIG_HOME=/home/container/.config
 
-# Write config to the correct path: $OPENCLAW_HOME/.openclaw/openclaw.json
+# Merge into existing config (preserve OpenClaw's own fields like meta, auth token)
+CONFIG_FILE="/home/container/.openclaw/openclaw.json"
 mkdir -p /home/container/.openclaw
-printf '%s\n' "$CONFIG_JSON" > /home/container/.openclaw/openclaw.json
 
-printf "\033[1m\033[33mstacloud@ai~ \033[0mGenerated /home/container/.openclaw/openclaw.json:\n"
-printf '%s\n' "$CONFIG_JSON"
+if [ -f "$CONFIG_FILE" ]; then
+  # Deep merge: existing config + our overrides (our gateway settings win)
+  MERGED=$(jq -s '
+    .[0] as $existing |
+    .[1] as $ours |
+    ($existing // {}) * $ours |
+    .gateway = (($existing.gateway // {}) * $ours.gateway)
+  ' "$CONFIG_FILE" - <<< "$OUR_CONFIG")
+  printf '%s\n' "$MERGED" > "$CONFIG_FILE"
+else
+  printf '%s\n' "$OUR_CONFIG" > "$CONFIG_FILE"
+fi
+
+printf "\033[1m\033[33mstacloud@ai~ \033[0mFinal /home/container/.openclaw/openclaw.json:\n"
+cat "$CONFIG_FILE"
 echo
 
 # --- Build gateway args ---
