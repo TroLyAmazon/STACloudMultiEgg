@@ -70,16 +70,16 @@ OUR_GATEWAY=$(jq -n \
 _CHANNELS="{}"
 if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
   _TG_DM="${TELEGRAM_DM_POLICY:-open}"
-  _CHANNELS=$(jq -n --arg dm "$_TG_DM" '{telegram:{dmPolicy:$dm}}')
+  _CHANNELS=$(jq -n --arg dm "$_TG_DM" '{telegram:{dmPolicy:$dm,allowFrom:["*"]}}')
 fi
 if [ -n "${DISCORD_BOT_TOKEN:-}" ]; then
-  _CHANNELS=$(jq -n --argjson ch "$_CHANNELS" '$ch + {discord:{dmPolicy:"open"}}')
+  _CHANNELS=$(jq -n --argjson ch "$_CHANNELS" '$ch + {discord:{dmPolicy:"open",allowFrom:["*"]}}')
 fi
 if [ -n "${SLACK_BOT_TOKEN:-}" ]; then
-  _CHANNELS=$(jq -n --argjson ch "$_CHANNELS" '$ch + {slack:{dmPolicy:"open"}}')
+  _CHANNELS=$(jq -n --argjson ch "$_CHANNELS" '$ch + {slack:{dmPolicy:"open",allowFrom:["*"]}}')
 fi
 if [ -n "${ZALO_BOT_TOKEN:-}" ]; then
-  _CHANNELS=$(jq -n --argjson ch "$_CHANNELS" '$ch + {zalo:{dmPolicy:"open"}}')
+  _CHANNELS=$(jq -n --argjson ch "$_CHANNELS" '$ch + {zalo:{dmPolicy:"open",allowFrom:["*"]}}')
 fi
 if [ -n "${WHATSAPP_SESSION:-}" ]; then
   _CHANNELS=$(jq -n --argjson ch "$_CHANNELS" --arg session "${WHATSAPP_SESSION}" '$ch + {whatsapp:{session:$session}}')
