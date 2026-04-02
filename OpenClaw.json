@@ -98,6 +98,246 @@
             "user_editable": true,
             "rules": "nullable|string|max:500",
             "field_type": "text"
+        },
+        {
+            "name": "Gemini API Key",
+            "description": "API key for Google Gemini models.",
+            "env_variable": "GEMINI_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "DeepSeek API Key",
+            "description": "API key for DeepSeek models.",
+            "env_variable": "DEEPSEEK_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Groq API Key",
+            "description": "API key for Groq models.",
+            "env_variable": "GROQ_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Together AI API Key",
+            "description": "API key for Together AI models.",
+            "env_variable": "TOGETHER_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Mistral API Key",
+            "description": "API key for Mistral models.",
+            "env_variable": "MISTRAL_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "xAI API Key",
+            "description": "API key for xAI (Grok) models.",
+            "env_variable": "XAI_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Cerebras API Key",
+            "description": "API key for Cerebras models.",
+            "env_variable": "CEREBRAS_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "SambaNova API Key",
+            "description": "API key for SambaNova models.",
+            "env_variable": "SAMBANOVA_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Fireworks API Key",
+            "description": "API key for Fireworks AI models.",
+            "env_variable": "FIREWORKS_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Cohere API Key",
+            "description": "API key for Cohere models.",
+            "env_variable": "COHERE_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "OpenRouter API Key",
+            "description": "API key for OpenRouter (access many models via one key).",
+            "env_variable": "OPENROUTER_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Novita API Key",
+            "description": "API key for Novita AI models.",
+            "env_variable": "NOVITA_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Moonshot API Key",
+            "description": "API key for Moonshot (Kimi) models.",
+            "env_variable": "MOONSHOT_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "MiniMax API Key",
+            "description": "API key for MiniMax models.",
+            "env_variable": "MINIMAX_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Zhipu API Key",
+            "description": "API key for Zhipu (GLM) models.",
+            "env_variable": "ZHIPU_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "SiliconFlow API Key",
+            "description": "API key for SiliconFlow models.",
+            "env_variable": "SILICONFLOW_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "StepFun API Key",
+            "description": "API key for StepFun models.",
+            "env_variable": "STEPFUN_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Yi API Key",
+            "description": "API key for Yi (01.AI) models.",
+            "env_variable": "YI_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Baichuan API Key",
+            "description": "API key for Baichuan models.",
+            "env_variable": "BAICHUAN_API_KEY",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Telegram Bot Token",
+            "description": "Bot token for Telegram channel integration.",
+            "env_variable": "TELEGRAM_BOT_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Discord Bot Token",
+            "description": "Bot token for Discord channel integration.",
+            "env_variable": "DISCORD_BOT_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Slack Bot Token",
+            "description": "Bot token for Slack channel integration.",
+            "env_variable": "SLACK_BOT_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Zalo Bot Token",
+            "description": "Bot token for Zalo channel integration.",
+            "env_variable": "ZALO_BOT_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Node.js Memory (MB)",
+            "description": "Max old space size for Node.js in MB. Set to ~80% of available RAM. Default 1536MB.",
+            "env_variable": "NODE_OPTIONS_MAX_OLD_SPACE",
+            "default_value": "1536",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:512|max:65536",
+            "field_type": "text"
         }
     ]
 }

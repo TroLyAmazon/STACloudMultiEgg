@@ -3,6 +3,11 @@ set -e
 
 cd /home/container || exit 1
 
+# Set Node.js memory limit
+if [ -n "${NODE_OPTIONS_MAX_OLD_SPACE:-}" ]; then
+  export NODE_OPTIONS="--max-old-space-size=${NODE_OPTIONS_MAX_OLD_SPACE}"
+fi
+
 mkdir -p \
   /home/container/.openclaw \
   /home/container/.openclaw/workspace \
