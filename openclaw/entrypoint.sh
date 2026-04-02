@@ -55,19 +55,35 @@ if [ "${OPENCLAW_BIND:-lan}" = "custom" ] && [ -n "${OPENCLAW_CUSTOM_BIND_HOST:-
   _CUSTOM=$(jq -n --arg h "${OPENCLAW_CUSTOM_BIND_HOST}" '{customBindHost:$h}')
 fi
 
-jq -n \
+CONFIG_JSON=$(jq -n \
   --argjson gw "$_CONFIG_GATEWAY" \
   --argjson cui "$_CUI" \
   --argjson custom "$_CUSTOM" \
-  '{commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:($gw + $cui + $custom)}' \
-  > /home/container/.openclaw/openclaw.json
+  '{commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:($gw + $cui + $custom)}')
 
 # --- Ensure env vars are set ---
 export HOME=/home/container
 export OPENCLAW_HOME=/home/container/.openclaw
+export XDG_CONFIG_HOME=/home/container/.config
+
+# Write config to all possible lookup paths
+for _DIR in \
+  /home/container/.openclaw \
+  /home/container/.config/openclaw \
+  /home/container/.config/open-claw; do
+  mkdir -p "$_DIR"
+  printf '%s\n' "$CONFIG_JSON" > "$_DIR/openclaw.json"
+  printf '%s\n' "$CONFIG_JSON" > "$_DIR/config.json"
+done
 
 printf "\033[1m\033[33mstacloud@ai~ \033[0mGenerated openclaw.json:\n"
-cat /home/container/.openclaw/openclaw.json
+printf '%s\n' "$CONFIG_JSON"
+echo
+printf "\033[1m\033[33mstacloud@ai~ \033[0mConfig written to ~/.openclaw/ ~/.config/openclaw/ ~/.config/open-claw/\n"
+
+# Debug: check what openclaw sees
+printf "\033[1m\033[33mstacloud@ai~ \033[0mopenclaw gateway --help (checking available flags):\n"
+openclaw gateway --help 2>&1 | head -30 || true
 echo
 
 # --- Build gateway args ---
@@ -79,6 +95,6 @@ if [ -n "${OPENCLAW_GATEWAY_TOKEN:-}" ]; then
   EXTRA_ARGS="${EXTRA_ARGS} --token ${OPENCLAW_GATEWAY_TOKEN}"
 fi
 
-CMD="openclaw gateway --allow-unconfigured --config /home/container/.openclaw/openclaw.json --bind ${OPENCLAW_BIND:-lan} --port ${SERVER_PORT}${EXTRA_ARGS:+ $EXTRA_ARGS}"
+CMD="openclaw gateway --allow-unconfigured --bind ${OPENCLAW_BIND:-lan} --port ${SERVER_PORT}${EXTRA_ARGS:+ $EXTRA_ARGS}"
 printf "\033[1m\033[33mstacloud@ai~ \033[0m%s\n" "$CMD"
 exec /bin/bash -c "$CMD"
