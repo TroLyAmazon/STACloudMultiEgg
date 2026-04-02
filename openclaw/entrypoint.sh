@@ -62,6 +62,10 @@ jq -n \
   '{commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:($gw + $cui + $custom)}' \
   > /home/container/.openclaw/openclaw.json
 
+# --- Ensure env vars are set ---
+export HOME=/home/container
+export OPENCLAW_HOME=/home/container/.openclaw
+
 printf "\033[1m\033[33mstacloud@ai~ \033[0mGenerated openclaw.json:\n"
 cat /home/container/.openclaw/openclaw.json
 echo
@@ -75,6 +79,6 @@ if [ -n "${OPENCLAW_GATEWAY_TOKEN:-}" ]; then
   EXTRA_ARGS="${EXTRA_ARGS} --token ${OPENCLAW_GATEWAY_TOKEN}"
 fi
 
-CMD="openclaw gateway --allow-unconfigured --bind ${OPENCLAW_BIND:-lan} --port ${SERVER_PORT}${EXTRA_ARGS:+ $EXTRA_ARGS}"
+CMD="openclaw gateway --allow-unconfigured --config /home/container/.openclaw/openclaw.json --bind ${OPENCLAW_BIND:-lan} --port ${SERVER_PORT}${EXTRA_ARGS:+ $EXTRA_ARGS}"
 printf "\033[1m\033[33mstacloud@ai~ \033[0m%s\n" "$CMD"
 exec /bin/bash -c "$CMD"
