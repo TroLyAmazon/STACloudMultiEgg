@@ -380,9 +380,9 @@
             "field_type": "text"
         },
         {
-            "name": "Zalo Bot Token",
-            "description": "Bot token for Zalo channel integration.",
-            "env_variable": "ZALO_BOT_TOKEN",
+            "name": "Slack Signing Secret",
+            "description": "Signing secret for Slack (required for event verification).",
+            "env_variable": "SLACK_SIGNING_SECRET",
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
@@ -390,9 +390,9 @@
             "field_type": "text"
         },
         {
-            "name": "Slack Signing Secret",
-            "description": "Signing secret for Slack (required for event verification).",
-            "env_variable": "SLACK_SIGNING_SECRET",
+            "name": "Zalo Bot Token",
+            "description": "Bot token for Zalo channel integration.",
+            "env_variable": "ZALO_BOT_TOKEN",
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,

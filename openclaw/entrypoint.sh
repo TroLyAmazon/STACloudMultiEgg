@@ -113,14 +113,14 @@ export HOME=/home/container
 export OPENCLAW_HOME=/home/container
 export XDG_CONFIG_HOME=/home/container/.config
 
-# --- Write auth-profiles.json for agent ---
+# --- Write auth-profiles.json for agent (only if env vars provided) ---
 AUTH_DIR="/home/container/.openclaw/agents/main/agent"
 AUTH_FILE="$AUTH_DIR/auth-profiles.json"
 mkdir -p "$AUTH_DIR"
 
 _AUTH="{}"
 if [ -n "${ANTHROPIC_API_KEY:-}" ]; then
-  _AUTH=$(jq -n --arg k "${ANTHROPIC_API_KEY}" '{anthropic:{apiKey:$k}}')
+  _AUTH=$(jq -n --argjson a "$_AUTH" --arg k "${ANTHROPIC_API_KEY}" '$a + {anthropic:{apiKey:$k}}')
 fi
 if [ -n "${OPENAI_API_KEY:-}" ]; then
   _AUTH=$(jq -n --argjson a "$_AUTH" --arg k "${OPENAI_API_KEY}" '$a + {openai:{apiKey:$k}}')
@@ -137,7 +137,17 @@ fi
 if [ -n "${DEEPSEEK_API_KEY:-}" ]; then
   _AUTH=$(jq -n --argjson a "$_AUTH" --arg k "${DEEPSEEK_API_KEY}" '$a + {deepseek:{apiKey:$k}}')
 fi
-printf '%s\n' "$_AUTH" > "$AUTH_FILE"
+
+# Only write if we have at least one key from env vars; otherwise keep existing file intact
+if [ "$_AUTH" != "{}" ]; then
+  if [ -f "$AUTH_FILE" ]; then
+    # Merge: env vars override existing, existing keys not in env vars are preserved
+    MERGED_AUTH=$(jq -s '.[0] + .[1]' "$AUTH_FILE" - <<< "$_AUTH")
+    printf '%s\n' "$MERGED_AUTH" > "$AUTH_FILE"
+  else
+    printf '%s\n' "$_AUTH" > "$AUTH_FILE"
+  fi
+fi
 
 # Write config (overwrite, but preserve meta from existing if present)
 CONFIG_FILE="/home/container/.openclaw/openclaw.json"
