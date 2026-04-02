@@ -77,11 +77,11 @@ if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
   else
     _TG_ALLOW='["*"]'
   fi
-  # Build groupAllowFrom array
+  # Build groups object {"id": {}}
   if [ "$_TG_GROUP_POLICY" = "allowlist" ] && [ -n "${TELEGRAM_GROUP_ALLOW_FROM:-}" ]; then
-    _TG_GROUP_ALLOW=$(jq -n --arg v "${TELEGRAM_GROUP_ALLOW_FROM}" '[$v | split(",") | .[] | gsub("^\\s+|\\s+$";"") | select(length>0)]')
+    _TG_GROUP_ALLOW=$(jq -n --arg v "${TELEGRAM_GROUP_ALLOW_FROM}" '[$v | split(",") | .[] | gsub("^\\s+|\\s+$";"") | select(length>0)] | map({(.): {}}) | add // {}')
   else
-    _TG_GROUP_ALLOW='[]'
+    _TG_GROUP_ALLOW='{}'
   fi
   _CHANNELS=$(jq -n \
     --arg dm "$_TG_DM" \
@@ -106,7 +106,7 @@ fi
 OUR_CONFIG=$(jq -n \
   --argjson gw "$OUR_GATEWAY" \
   --argjson ch "$_CHANNELS" \
-  '{meta:{},commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:$gw,channels:$ch,routing:{rules:[{channel:"*",agentId:"default"}]}}')
+  '{meta:{},commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:$gw,channels:$ch}')
 
 # --- Ensure env vars are set ---
 export HOME=/home/container
