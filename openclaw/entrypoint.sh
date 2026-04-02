@@ -59,7 +59,7 @@ OUR_GATEWAY=$(jq -n \
   --argjson gw "$_CONFIG_GATEWAY" \
   --argjson cui "$_CUI" \
   --argjson custom "$_CUSTOM" \
-  '$gw + $cui + $custom + {trustedProxies:["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16","fc00::/7"],pairing:{autoApprove:true,required:false}}')
+  '$gw + $cui + $custom + {trustedProxies:["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16","fc00::/7"]} | .controlUi += {dangerouslyDisableDeviceAuth:true}')
 
 OUR_CONFIG=$(jq -n \
   --argjson gw "$OUR_GATEWAY" \
@@ -70,17 +70,16 @@ export HOME=/home/container
 export OPENCLAW_HOME=/home/container
 export XDG_CONFIG_HOME=/home/container/.config
 
-# Merge into existing config (preserve OpenClaw's own fields like meta, auth token)
+# Write config (overwrite, but preserve meta from existing if present)
 CONFIG_FILE="/home/container/.openclaw/openclaw.json"
 mkdir -p /home/container/.openclaw
 
 if [ -f "$CONFIG_FILE" ]; then
-  # Deep merge: existing config + our overrides (our gateway settings win)
+  # Only preserve meta from existing config; gateway settings fully replaced by ours
   MERGED=$(jq -s '
     .[0] as $existing |
     .[1] as $ours |
-    ($existing // {}) * $ours |
-    .gateway = (($existing.gateway // {}) * $ours.gateway)
+    $ours + (if $existing.meta then {meta: $existing.meta} else {} end)
   ' "$CONFIG_FILE" - <<< "$OUR_CONFIG")
   printf '%s\n' "$MERGED" > "$CONFIG_FILE"
 else
@@ -102,27 +101,4 @@ fi
 
 CMD="openclaw gateway --allow-unconfigured --bind ${OPENCLAW_BIND:-lan} --port ${SERVER_PORT}${EXTRA_ARGS:+ $EXTRA_ARGS}"
 printf "\033[1m\033[33mstacloud@ai~ \033[0m%s\n" "$CMD"
-
-# Start gateway in background, auto-pair, then wait
-/bin/bash -c "$CMD" &
-GW_PID=$!
-
-# Wait for gateway to be ready
-for i in $(seq 1 30); do
-  if curl -s -o /dev/null -w '' "http://127.0.0.1:${SERVER_PORT}/__openclaw__/canvas/" 2>/dev/null; then
-    break
-  fi
-  sleep 0.5
-done
-
-# Auto-approve pairing for this gateway
-if command -v openclaw >/dev/null 2>&1; then
-  printf "\033[1m\033[33mstacloud@ai~ \033[0mAuto-pairing...\n"
-  openclaw pairing --token "${OPENCLAW_GATEWAY_TOKEN}" --approve-all 2>&1 || \
-  openclaw pairing approve --all 2>&1 || \
-  openclaw pairing --help 2>&1 || \
-  printf "\033[1m\033[33mstacloud@ai~ \033[0mPairing auto-approve not available\n"
-fi
-
-# Wait for gateway process
-wait $GW_PID
+exec /bin/bash -c "$CMD"
