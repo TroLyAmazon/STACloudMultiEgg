@@ -309,6 +309,36 @@
             "field_type": "text"
         },
         {
+            "name": "Telegram DM Allow From",
+            "description": "Comma-separated Telegram user IDs allowed to DM the bot (used when DM Policy is 'allowlist'). Leave blank to allow everyone ('*').",
+            "env_variable": "TELEGRAM_ALLOW_FROM",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:1000",
+            "field_type": "text"
+        },
+        {
+            "name": "Telegram Group Policy",
+            "description": "Who can use the bot in Telegram groups. 'open' = any group, 'allowlist' = only specified group IDs, 'disabled' = no groups.",
+            "env_variable": "TELEGRAM_GROUP_POLICY",
+            "default_value": "open",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:open,allowlist,disabled",
+            "field_type": "text"
+        },
+        {
+            "name": "Telegram Group Allow From",
+            "description": "Comma-separated Telegram group IDs allowed to use the bot (used when Group Policy is 'allowlist'). Example: -1001234567890,-1009876543210",
+            "env_variable": "TELEGRAM_GROUP_ALLOW_FROM",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:1000",
+            "field_type": "text"
+        },
+        {
             "name": "Discord Bot Token",
             "description": "Bot token for Discord channel integration.",
             "env_variable": "DISCORD_BOT_TOKEN",

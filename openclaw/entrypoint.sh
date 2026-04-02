@@ -70,7 +70,25 @@ OUR_GATEWAY=$(jq -n \
 _CHANNELS="{}"
 if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
   _TG_DM="${TELEGRAM_DM_POLICY:-open}"
-  _CHANNELS=$(jq -n --arg dm "$_TG_DM" '{telegram:{enabled:true,dmPolicy:$dm,allowFrom:["*"]}}')
+  _TG_GROUP_POLICY="${TELEGRAM_GROUP_POLICY:-open}"
+  # Build dmAllowFrom array
+  if [ -n "${TELEGRAM_ALLOW_FROM:-}" ]; then
+    _TG_ALLOW=$(jq -n --arg v "${TELEGRAM_ALLOW_FROM}" '[$v | split(",") | .[] | gsub("^\\s+|\\s+$";"") | select(length>0)]')
+  else
+    _TG_ALLOW='["*"]'
+  fi
+  # Build groupAllowFrom array
+  if [ "$_TG_GROUP_POLICY" = "allowlist" ] && [ -n "${TELEGRAM_GROUP_ALLOW_FROM:-}" ]; then
+    _TG_GROUP_ALLOW=$(jq -n --arg v "${TELEGRAM_GROUP_ALLOW_FROM}" '[$v | split(",") | .[] | gsub("^\\s+|\\s+$";"") | select(length>0)]')
+  else
+    _TG_GROUP_ALLOW='[]'
+  fi
+  _CHANNELS=$(jq -n \
+    --arg dm "$_TG_DM" \
+    --arg gp "$_TG_GROUP_POLICY" \
+    --argjson af "$_TG_ALLOW" \
+    --argjson gaf "$_TG_GROUP_ALLOW" \
+    '{telegram:{enabled:true,dmPolicy:$dm,allowFrom:$af,groupPolicy:$gp,groupAllowFrom:$gaf}}')
 fi
 if [ -n "${DISCORD_BOT_TOKEN:-}" ]; then
   _CHANNELS=$(jq -n --argjson ch "$_CHANNELS" '$ch + {discord:{enabled:true,dmPolicy:"open",allowFrom:["*"]}}')
