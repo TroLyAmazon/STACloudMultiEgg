@@ -18,7 +18,7 @@ USER container
 ENV USER=container \
     HOME=/home/container \
     NODE_ENV=production \
-    OPENCLAW_HOME=/home/container/.openclaw
+    OPENCLAW_HOME=/home/container
 WORKDIR /home/container
 
 EXPOSE 18789
