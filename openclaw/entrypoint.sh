@@ -125,14 +125,16 @@ fi
 # Build agents block with model if resolved
 _AGENTS="{}"
 if [ -n "${_RESOLVED_MODEL:-}" ]; then
-  _AGENTS=$(jq -n --arg m "$_RESOLVED_MODEL" '{defaults:{model:$m}}')
+  _AGENTS=$(jq -n --arg m "$_RESOLVED_MODEL" '{defaults:{model:$m,workspace:"/home/container/.openclaw/workspace",mediaMaxMb:100}}')
+else
+  _AGENTS=$(jq -n '{defaults:{workspace:"/home/container/.openclaw/workspace",mediaMaxMb:100}}')
 fi
 
 OUR_CONFIG=$(jq -n \
   --argjson gw "$OUR_GATEWAY" \
   --argjson ch "$_CHANNELS" \
   --argjson ag "$_AGENTS" \
-  '{meta:{},commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:$gw,channels:$ch,tools:{profile:"full"}} + (if $ag != {} then {agents:$ag} else {} end)')
+  '{meta:{},commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:$gw,channels:$ch,tools:{profile:"full",elevated:{enabled:true}},agents:$ag}')
 
 # --- Ensure env vars are set ---
 export HOME=/home/container
