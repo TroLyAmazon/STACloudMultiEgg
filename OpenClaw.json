@@ -100,6 +100,56 @@
             "field_type": "text"
         },
         {
+            "name": "Telegram Bot Token",
+            "description": "Bot token for Telegram channel integration.",
+            "env_variable": "TELEGRAM_BOT_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Telegram DM Policy",
+            "description": "Who can DM the Telegram bot. 'open' = anyone, 'pairing' = require approval, 'allowlist' = only allowlisted users.",
+            "env_variable": "TELEGRAM_DM_POLICY",
+            "default_value": "open",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:open,pairing,allowlist",
+            "field_type": "text"
+        },
+        {
+            "name": "Telegram DM Allow From",
+            "description": "Comma-separated Telegram user IDs allowed to DM the bot (used when DM Policy is 'allowlist'). Leave blank to allow everyone ('*').",
+            "env_variable": "TELEGRAM_ALLOW_FROM",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:1000",
+            "field_type": "text"
+        },
+        {
+            "name": "Telegram Group Policy",
+            "description": "Who can use the bot in Telegram groups. 'open' = any group, 'allowlist' = only specified group IDs, 'disabled' = no groups.",
+            "env_variable": "TELEGRAM_GROUP_POLICY",
+            "default_value": "open",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:open,allowlist,disabled",
+            "field_type": "text"
+        },
+        {
+            "name": "Telegram Group Allow From",
+            "description": "Comma-separated Telegram group IDs allowed to use the bot (used when Group Policy is 'allowlist'). Example: -1001234567890,-1009876543210",
+            "env_variable": "TELEGRAM_GROUP_ALLOW_FROM",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:1000",
+            "field_type": "text"
+        },
+        {
             "name": "Agent Default Model",
             "description": "Default model for the main OpenClaw agent used by web chat and Telegram. Example: xai/grok-4.20-0309-non-reasoning",
             "env_variable": "OPENCLAW_AGENT_MODEL",
@@ -317,56 +367,6 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:255",
-            "field_type": "text"
-        },
-        {
-            "name": "Telegram Bot Token",
-            "description": "Bot token for Telegram channel integration.",
-            "env_variable": "TELEGRAM_BOT_TOKEN",
-            "default_value": "",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "nullable|string|max:255",
-            "field_type": "text"
-        },
-        {
-            "name": "Telegram DM Policy",
-            "description": "Who can DM the Telegram bot. 'open' = anyone, 'pairing' = require approval, 'allowlist' = only allowlisted users.",
-            "env_variable": "TELEGRAM_DM_POLICY",
-            "default_value": "open",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|in:open,pairing,allowlist",
-            "field_type": "text"
-        },
-        {
-            "name": "Telegram DM Allow From",
-            "description": "Comma-separated Telegram user IDs allowed to DM the bot (used when DM Policy is 'allowlist'). Leave blank to allow everyone ('*').",
-            "env_variable": "TELEGRAM_ALLOW_FROM",
-            "default_value": "",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "nullable|string|max:1000",
-            "field_type": "text"
-        },
-        {
-            "name": "Telegram Group Policy",
-            "description": "Who can use the bot in Telegram groups. 'open' = any group, 'allowlist' = only specified group IDs, 'disabled' = no groups.",
-            "env_variable": "TELEGRAM_GROUP_POLICY",
-            "default_value": "open",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|in:open,allowlist,disabled",
-            "field_type": "text"
-        },
-        {
-            "name": "Telegram Group Allow From",
-            "description": "Comma-separated Telegram group IDs allowed to use the bot (used when Group Policy is 'allowlist'). Example: -1001234567890,-1009876543210",
-            "env_variable": "TELEGRAM_GROUP_ALLOW_FROM",
-            "default_value": "",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "nullable|string|max:1000",
             "field_type": "text"
         },
         {
