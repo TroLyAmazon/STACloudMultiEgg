@@ -134,7 +134,7 @@ OUR_CONFIG=$(jq -n \
   --argjson gw "$OUR_GATEWAY" \
   --argjson ch "$_CHANNELS" \
   --argjson ag "$_AGENTS" \
-  '{meta:{},commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw"},gateway:$gw,channels:$ch,tools:{profile:"full",elevated:{enabled:true}},agents:$ag}')
+  '{meta:{},commands:{native:"auto",nativeSkills:"auto",restart:true,ownerDisplay:"raw",bash:true,config:true},gateway:$gw,channels:$ch,tools:{profile:"full",elevated:{enabled:true}},agents:$ag}')
 
 # --- Ensure env vars are set ---
 export HOME=/home/container
