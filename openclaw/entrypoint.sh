@@ -123,9 +123,24 @@ AUTH_DIR="/home/container/.openclaw/agents/main/agent"
 AUTH_FILE="$AUTH_DIR/auth-profiles.json"
 mkdir -p "$AUTH_DIR"
 
-# --- Write agent model config when explicitly provided ---
-if [ -n "${OPENCLAW_AGENT_MODEL:-}" ]; then
-  printf '%s\n' "$(jq -n --arg model "${OPENCLAW_AGENT_MODEL}" '{model:$model}')" > "$AUTH_DIR/agent.json"
+# --- Resolve and write agent model config ---
+_RESOLVED_MODEL="${OPENCLAW_AGENT_MODEL:-}"
+if [ -z "$_RESOLVED_MODEL" ]; then
+  if [ -n "${XAI_API_KEY:-}" ]; then
+    _RESOLVED_MODEL="xai/grok-4.20-0309-non-reasoning"
+  elif [ -n "${OPENAI_API_KEY:-}" ]; then
+    _RESOLVED_MODEL="openai/gpt-4o-mini"
+  elif [ -n "${GEMINI_API_KEY:-}" ]; then
+    _RESOLVED_MODEL="google/gemini-2.0-flash"
+  elif [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+    _RESOLVED_MODEL="anthropic/claude-opus-4-6"
+  fi
+fi
+if [ -n "$_RESOLVED_MODEL" ]; then
+  _MODEL_JSON="$(jq -n --arg model "$_RESOLVED_MODEL" '{model:$model}')"
+  printf '%s\n' "$_MODEL_JSON" > "$AUTH_DIR/agent.json"
+  # Some OpenClaw builds look for config.json in the same directory.
+  printf '%s\n' "$_MODEL_JSON" > "$AUTH_DIR/config.json"
 fi
 
 _AUTH="{}"
