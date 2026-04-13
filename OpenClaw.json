@@ -92,7 +92,7 @@
         },
         {
             "name": "Allowed origins",
-            "description": "Comma-separated HTTPS origins for Control UI when using non-loopback bind. Example: https://dsg1.stacloud.tech",
+            "description": "Comma-separated HTTPS origins for Control UI when using non-loopback bind. Example: https://ai.user.com",
             "env_variable": "OPENCLAW_ALLOWED_ORIGINS",
             "default_value": "",
             "user_viewable": true,
@@ -118,6 +118,16 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:500",
+            "field_type": "text"
+        },
+        {
+            "name": "Proxy upstream host",
+            "description": "Host written into the generated Caddy snippet and proxy manifest. Use 127.0.0.1 when Caddy runs on the same node, or set the node private IP when using a central proxy.",
+            "env_variable": "OPENCLAW_PROXY_UPSTREAM_HOST",
+            "default_value": "127.0.0.1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:255",
             "field_type": "text"
         },
         {

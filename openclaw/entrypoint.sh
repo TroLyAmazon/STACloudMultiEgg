@@ -15,6 +15,16 @@ RUNTIME_BIN="${RUNTIME_PREFIX}/bin/openclaw"
 IMAGE_OPENCLAW_BIN="$(command -v openclaw || true)"
 ACTIVE_OPENCLAW_BIN="${IMAGE_OPENCLAW_BIN}"
 OPENCLAW_PACKAGE_TARGET="${OPENCLAW_UPDATE_OPENCLAW_VERSION:-${OPENCLAW_UPDATE_CHANNEL:-latest}}"
+OPENCLAW_PROXY_UPSTREAM_HOST="${OPENCLAW_PROXY_UPSTREAM_HOST:-127.0.0.1}"
+
+PRIMARY_PUBLIC_ORIGIN=""
+if [ -n "${OPENCLAW_ALLOWED_ORIGINS:-}" ]; then
+  PRIMARY_PUBLIC_ORIGIN="$(printf '%s' "${OPENCLAW_ALLOWED_ORIGINS}" | cut -d',' -f1 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+fi
+PRIMARY_PUBLIC_HOST=""
+if [ -n "$PRIMARY_PUBLIC_ORIGIN" ]; then
+  PRIMARY_PUBLIC_HOST="$(printf '%s' "$PRIMARY_PUBLIC_ORIGIN" | sed -E 's#^[a-zA-Z][a-zA-Z0-9+.-]*://##; s#/.*$##')"
+fi
 
 mkdir -p "$STATE_DIR" "$RUNTIME_ROOT" "$RUNTIME_PREFIX" "$RUNTIME_CACHE" "$XDG_OPENCLAW_DIR"
 
@@ -120,7 +130,7 @@ OUR_GATEWAY=$(jq -n \
   --argjson gw "$_CONFIG_GATEWAY" \
   --argjson cui "$_CUI" \
   --argjson custom "$_CUSTOM" \
-  '$gw + $cui + $custom + {trustedProxies:["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16","fc00::/7"]} | .controlUi += {dangerouslyDisableDeviceAuth:true,dangerouslyAllowHostHeaderOriginFallback:true}')
+  '$gw + $cui + $custom + {trustedProxies:["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16","fc00::/7"]} | .controlUi = ((.controlUi // {}) + {dangerouslyDisableDeviceAuth:true})')
 
 # --- Channels config (only dmPolicy, tokens via env vars) ---
 _CHANNELS="{}"
@@ -252,6 +262,40 @@ fi
 
 # Mirror to the XDG config location as a symlink for builds that prefer ~/.config/openclaw/config.json5.
 ln -sfn "$CONFIG_FILE" "$XDG_CONFIG_FILE"
+
+if [ -n "$PRIMARY_PUBLIC_ORIGIN" ]; then
+  PUBLIC_ENDPOINT_FILE="${STATE_DIR}/public-endpoint.json"
+  CADDY_SNIPPET_FILE="${STATE_DIR}/caddy-route.caddy"
+  jq -n \
+    --arg domain "$PRIMARY_PUBLIC_HOST" \
+    --arg origin "$PRIMARY_PUBLIC_ORIGIN" \
+    --arg bind "${OPENCLAW_BIND:-lan}" \
+    --arg upstreamHost "$OPENCLAW_PROXY_UPSTREAM_HOST" \
+    --arg upstreamPort "${SERVER_PORT:-}" \
+    --arg upstream "${OPENCLAW_PROXY_UPSTREAM_HOST}:${SERVER_PORT:-}" \
+    --arg generatedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    '{
+      kind:"openclaw-public-endpoint",
+      version:1,
+      generatedAt:$generatedAt,
+      publicDomain:$domain,
+      publicOrigin:$origin,
+      bind:$bind,
+      upstreamHost:$upstreamHost,
+      upstreamPort:$upstreamPort,
+      upstream:$upstream
+    }' > "$PUBLIC_ENDPOINT_FILE"
+
+  cat > "$CADDY_SNIPPET_FILE" <<EOF
+$PRIMARY_PUBLIC_HOST {
+  reverse_proxy ${OPENCLAW_PROXY_UPSTREAM_HOST}:${SERVER_PORT:-}
+}
+EOF
+
+  printf "\033[1m\033[33mstacloud@ai~ \033[0mCustom public origin=%s\n" "$PRIMARY_PUBLIC_ORIGIN"
+  printf "\033[1m\033[33mstacloud@ai~ \033[0mWrote proxy manifest=%s\n" "$PUBLIC_ENDPOINT_FILE"
+  printf "\033[1m\033[33mstacloud@ai~ \033[0mWrote Caddy snippet=%s\n" "$CADDY_SNIPPET_FILE"
+fi
 
 printf "\033[1m\033[33mstacloud@ai~ \033[0mUsing OPENCLAW_STATE_DIR=%s\n" "$OPENCLAW_STATE_DIR"
 printf "\033[1m\033[33mstacloud@ai~ \033[0mUsing OPENCLAW_CONFIG_PATH=%s\n" "$OPENCLAW_CONFIG_PATH"
