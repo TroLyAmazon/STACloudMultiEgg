@@ -14,7 +14,11 @@
         "pid_limit"
     ],
     "docker_images": {
-        "Java 22": "ghcr.io\/ptero-eggs\/yolks:java_22"
+        "Java 21": "ghcr.io\/sta-cloud-dev\/deverlopment:java_21",
+        "Java 25": "ghcr.io\/sta-cloud-dev\/deverlopment:java_25",
+        "Java 17": "ghcr.io\/sta-cloud-dev\/deverlopment:java_17",
+        "Java 11": "ghcr.io\/sta-cloud-dev\/deverlopment:java_11",
+        "Java 8": "ghcr.io\/sta-cloud-dev\/deverlopment:java_8"
     },
     "file_denylist": [],
     "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 --add-modules=jdk.incubator.vector -jar server.jar --nogui",

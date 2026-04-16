@@ -118,6 +118,8 @@ Namespace: `ghcr.io/sta-cloud-dev/deverlopment`
 - `java_21`
 - `java_21j9`
 - `java_22`
+- `java_23`
+- `java_24`
 - `java_25`
 
 ### Node.js
@@ -286,6 +288,7 @@ The runtime also writes helper files for orchestration:
 Custom-domain notes:
 
 - [docs/openclaw-custom-domain.md](docs/openclaw-custom-domain.md)
+- [docs/pterodactyl-openclaw-domain-manager-spec.md](docs/pterodactyl-openclaw-domain-manager-spec.md)
 
 ---
 

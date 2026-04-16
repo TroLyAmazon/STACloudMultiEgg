@@ -44,6 +44,10 @@ jobs:
             platforms: linux/amd64,linux/arm64
           - tag: 22
             platforms: linux/amd64,linux/arm64
+          - tag: 23
+            platforms: linux/amd64,linux/arm64
+          - tag: 24
+            platforms: linux/amd64,linux/arm64
           - tag: 25
             platforms: linux/amd64,linux/arm64
     steps:

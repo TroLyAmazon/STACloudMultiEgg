@@ -8,13 +8,14 @@
     "name": "LavaLink",
     "author": "congdongamazon@gmail.com",
     "uuid": "5b0407f5-bcc9-4b77-bc13-4325ff2e7b1e",
-    "description": "Egg Lavalink cho STACloud, cai dat tu GitHub releases va ho tro chay bang Java 11, 13, 17, 21.",
+    "description": "Egg Lavalink cho STACloud, cai dat tu GitHub releases va ho tro chay bang Java 8, 11, 17, 21, 25.",
     "features": null,
     "docker_images": {
         "Java 21": "ghcr.io/sta-cloud-dev/deverlopment:java_21",
+        "Java 25": "ghcr.io/sta-cloud-dev/deverlopment:java_25",
         "Java 17": "ghcr.io/sta-cloud-dev/deverlopment:java_17",
-        "Java 13": "ghcr.io/sta-cloud-dev/deverlopment:java_13",
-        "Java 11": "ghcr.io/sta-cloud-dev/deverlopment:java_11"
+        "Java 11": "ghcr.io/sta-cloud-dev/deverlopment:java_11",
+        "Java 8": "ghcr.io/sta-cloud-dev/deverlopment:java_8"
     },
     "file_denylist": [],
     "startup": "java -jar Lavalink.jar",

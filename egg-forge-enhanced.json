@@ -14,12 +14,11 @@
         "pid_limit"
     ],
     "docker_images": {
-        "Java 8": "ghcr.io\/sta-cloud-dev\/deverlopment:java_8",
-        "Java 11": "ghcr.io\/sta-cloud-dev\/deverlopment:java_11",
-        "Java 16": "ghcr.io\/sta-cloud-dev\/deverlopment:java_16",
+        "Java 21": "ghcr.io\/sta-cloud-dev\/deverlopment:java_21",
+        "Java 25": "ghcr.io\/sta-cloud-dev\/deverlopment:java_25",
         "Java 17": "ghcr.io\/sta-cloud-dev\/deverlopment:java_17",
-        "java 21": "ghcr.io\/sta-cloud-dev\/deverlopment:java_21",
-        "java 22": "ghcr.io\/sta-cloud-dev\/deverlopment:java_22"
+        "Java 11": "ghcr.io\/sta-cloud-dev\/deverlopment:java_11",
+        "Java 8": "ghcr.io\/sta-cloud-dev\/deverlopment:java_8"
     },
     "file_denylist": [],
     "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true $( [[  ! -f unix_args.txt ]] && printf %s \"-jar {{SERVER_JARFILE}}\" || printf %s \"@unix_args.txt\" )",
