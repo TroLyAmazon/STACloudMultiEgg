@@ -99,6 +99,13 @@ Namespace: `ghcr.io/sta-cloud-dev/deverlopment`
 - `bun_latest`
 - `bun_canary`
 
+### Debian
+
+Namespace: `ghcr.io/sta-cloud-dev/deverlopment`
+
+- `debian_bookworm`
+- `debian`
+
 ### Java
 
 Namespace: `ghcr.io/sta-cloud-dev/deverlopment`
