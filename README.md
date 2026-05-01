@@ -101,7 +101,7 @@ Namespace: `ghcr.io/sta-cloud-dev/deverlopment`
 
 ### Debian
 
-Namespace: `ghcr.io/sta-cloud-dev/deverlopment`
+Namespace: `ghcr.io/sta-cloud-dev/oses`
 
 - `debian_bookworm`
 - `debian`

@@ -1,15 +1,11 @@
 name: build debian
 on:
-  push:
-    paths:
-      - "oses/debian_bookworm/**"
-      - ".github/workflows/debian.yml"
   workflow_dispatch:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:
   push:
-    name: "deverlopment:debian_bookworm"
+    name: "oses:debian"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -39,5 +35,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ghcr.io/${{ steps.registry.outputs.owner_lower }}/deverlopment:debian_bookworm
-            ghcr.io/${{ steps.registry.outputs.owner_lower }}/deverlopment:debian
+            ghcr.io/${{ steps.registry.outputs.owner_lower }}/oses:debian_bookworm
+            ghcr.io/${{ steps.registry.outputs.owner_lower }}/oses:debian
