@@ -15,7 +15,7 @@
         "OpenClaw Latest New": "ghcr.io/sta-cloud-dev/ai:openclaw_latest"
     },
     "file_denylist": [],
-    "startup": "openclaw gateway --allow-unconfigured --bind ${OPENCLAW_BIND} --port ${SERVER_PORT}",
+    "startup": "if [ -n \"${CUSTOM_STARTUP}\" ]; then eval \"${CUSTOM_STARTUP}\"; else openclaw gateway --allow-unconfigured --bind ${OPENCLAW_BIND} --port ${SERVER_PORT}; fi",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"listening on\"\r\n}",
@@ -30,6 +30,16 @@
         }
     },
     "variables": [
+        {
+            "name": "Custom Startup Command",
+            "description": "Optional command to run instead of the egg default startup. Leave empty to use the default startup command.",
+            "env_variable": "CUSTOM_STARTUP",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:2048",
+            "field_type": "text"
+        },
         {
             "name": "Gateway verbose",
             "description": "Enable verbose gateway logs. true = verbose, false = normal.",

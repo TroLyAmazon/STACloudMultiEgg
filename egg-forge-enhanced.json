@@ -21,7 +21,7 @@
         "Java 8": "ghcr.io\/sta-cloud-dev\/deverlopment:java_8"
     },
     "file_denylist": [],
-    "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true $( [[  ! -f unix_args.txt ]] && printf %s \"-jar {{SERVER_JARFILE}}\" || printf %s \"@unix_args.txt\" )",
+    "startup": "if [ -n \"${CUSTOM_STARTUP}\" ]; then eval \"${CUSTOM_STARTUP}\"; else java -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true $( [[  ! -f unix_args.txt ]] && printf %s \"-jar {{SERVER_JARFILE}}\" || printf %s \"@unix_args.txt\" ); fi",
     "config": {
         "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\",\r\n            \"query.port\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \")! For help, type \"\r\n}",
@@ -36,6 +36,16 @@
         }
     },
     "variables": [
+        {
+            "name": "Custom Startup Command",
+            "description": "Optional command to run instead of the egg default startup. Leave empty to use the default startup command.",
+            "env_variable": "CUSTOM_STARTUP",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:2048",
+            "field_type": "text"
+        },
         {
             "name": "Server Jar File",
             "description": "The name of the Jarfile to use when running Forge version below 1.17.",
