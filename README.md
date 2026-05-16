@@ -91,6 +91,7 @@ Namespace: `ghcr.io/sta-cloud-dev/deverlopment`
 - `python_3.12`
 - `python_3.13`
 - `python_3.14`
+- `python_3.15`
 
 ### Bun
 
