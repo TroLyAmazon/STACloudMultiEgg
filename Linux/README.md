@@ -25,10 +25,10 @@ Import `../Egg/Linux/egg-linux.json` into your panel.
 Variables:
 
 - `SSH`: defaults to the panel primary allocation port.
-- `SSH_USER`: left blank in the panel and generated on first start. Not user editable.
+- `SSH_USER`: fixed to `stacloud`. Not user editable.
 - `SSH_PASSWORD`: left blank in the panel and generated on first start. Not user editable.
 - `noVNC`, `Web app`, `API`, and `Bot panel`: optional port variables, blank by default.
 
-The runtime does not start system OpenSSH and does not create Linux users at container start. The built-in STACloud SSH server runs as the panel-provided container user and opens a root-style shell inside the VPS rootfs.
+The runtime starts the packaged SSH daemon with the fixed `stacloud` user and a random password generated on first start.
 
 The web console prints SSH credentials and the noVNC URL when a noVNC port is set. Use `install-gui`, then `start-novnc` to enable browser VNC for a server.

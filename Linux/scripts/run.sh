@@ -31,26 +31,6 @@ random_string() {
     printf "%s" "$value"
 }
 
-random_username() {
-    suffix="$(random_string 10 | tr 'A-Z' 'a-z')"
-    [ -n "$suffix" ] || suffix="$(date +%s)"
-    printf "sta%s" "$suffix"
-}
-
-valid_username() {
-    case "$1" in
-        sta*) ;;
-        *)
-            return 1
-            ;;
-    esac
-    [ "${#1}" -ge 6 ] && [ "${#1}" -le 32 ] || return 1
-    case "$1" in
-        *[!abcdefghijklmnopqrstuvwxyz0123456789]*) return 1 ;;
-    esac
-    return 0
-}
-
 valid_password() {
     [ -n "$1" ] && [ "${#1}" -ge 12 ] && [ "${#1}" -le 128 ]
 }
@@ -60,7 +40,7 @@ load_or_create_credentials() {
         . "$CREDENTIALS_FILE"
     fi
 
-    valid_username "$SSH_LOGIN" || SSH_LOGIN="$(random_username)"
+    SSH_LOGIN="stacloud"
     valid_password "$SSH_SECRET" || SSH_SECRET="$(random_string 24)"
 
     {

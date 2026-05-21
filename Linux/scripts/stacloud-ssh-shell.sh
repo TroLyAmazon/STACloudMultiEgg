@@ -3,7 +3,7 @@
 export HOME=/home/container
 cd /home/container || exit 1
 
-exec /usr/local/bin/proot \
+exec /usr/bin/proot \
     -r /home/container \
     -0 \
     -w /home/container \

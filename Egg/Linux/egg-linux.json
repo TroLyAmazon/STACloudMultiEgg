@@ -68,9 +68,9 @@
         },
         {
             "name": "user",
-            "description": "SSH username. Leave blank so the image generates a random username on first start.",
+            "description": "SSH username. Fixed to stacloud.",
             "env_variable": "SSH_USER",
-            "default_value": "",
+            "default_value": "stacloud",
             "user_viewable": true,
             "user_editable": false,
             "rules": "nullable|string|max:64",

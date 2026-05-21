@@ -11,7 +11,7 @@ ensure_runtime_scripts() {
 
 ensure_runtime_scripts
 
-exec /usr/local/bin/proot \
+exec /usr/bin/proot \
     -r "$HOME" \
     -0 \
     -w /home/container \

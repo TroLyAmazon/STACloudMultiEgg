@@ -89,6 +89,17 @@ post_install_config() {
         sed -i 's|/var/lib/pacman/|/var/lib/pacman|' "$ROOTFS_DIR/etc/pacman.conf"
         sed -i '/^#DBPath/s/^#//' "$ROOTFS_DIR/etc/pacman.conf"
     fi
+
+    if [ -x "$ROOTFS_DIR/usr/bin/gnuls" ] && [ -x "$ROOTFS_DIR/usr/bin/gnurm" ] && [ -x "$ROOTFS_DIR/usr/bin/gnuln" ]; then
+        for gnu_path in "$ROOTFS_DIR"/usr/bin/gnu*; do
+            [ -e "$gnu_path" ] || continue
+            gnu_name="$(basename "$gnu_path")"
+            target_name="${gnu_name#gnu}"
+            [ -n "$target_name" ] && [ "$target_name" != "$gnu_name" ] || continue
+            rm -f "$ROOTFS_DIR/usr/bin/$target_name"
+            ln -s "$gnu_name" "$ROOTFS_DIR/usr/bin/$target_name"
+        done
+    fi
 }
 
 copy_runtime_scripts() {
