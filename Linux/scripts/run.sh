@@ -8,7 +8,6 @@ MAX_HISTORY=1000
 CREDENTIALS_FILE="/.stacloud_credentials"
 GUI_CONFIG_FILE="/gui_config.yml"
 VNC_DIR="$HOME/.vnc"
-SSHD_PID_FILE="/tmp/stacloud-sshd.pid"
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 
@@ -67,70 +66,6 @@ write_runtime_config() {
     fi
 }
 
-install_ssh_packages() {
-    if command -v sshd >/dev/null 2>&1 || [ -x /usr/sbin/sshd ]; then
-        return 0
-    fi
-
-    distro="$(detect_distro)"
-    log "INFO" "Installing OpenSSH server" "$YELLOW"
-
-    case "$distro" in
-        debian|ubuntu|linuxmint|kali)
-            apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq openssh-server sudo passwd procps
-            ;;
-        rocky|almalinux|centos|ol)
-            if command -v dnf >/dev/null 2>&1; then
-                dnf install -y -q openssh-server sudo passwd shadow-utils procps-ng
-            elif command -v microdnf >/dev/null 2>&1; then
-                microdnf install -y openssh-server sudo passwd shadow-utils procps-ng
-            else
-                yum install -y -q openssh-server sudo passwd shadow-utils procps-ng
-            fi
-            ;;
-        arch)
-            pacman -Sy --noconfirm --needed openssh sudo shadow procps-ng
-            ;;
-        *)
-            log "ERROR" "Cannot install OpenSSH for distro: $distro" "$RED"
-            return 1
-            ;;
-    esac
-}
-
-ensure_ssh_user() {
-    if ! id "$SSH_LOGIN" >/dev/null 2>&1; then
-        if command -v useradd >/dev/null 2>&1; then
-            useradd -m -s /bin/bash "$SSH_LOGIN"
-        elif command -v adduser >/dev/null 2>&1; then
-            adduser -D -h "/home/$SSH_LOGIN" -s /bin/sh "$SSH_LOGIN"
-        else
-            log "ERROR" "No user creation tool found." "$RED"
-            return 1
-        fi
-    fi
-
-    printf "%s:%s\n" "$SSH_LOGIN" "$SSH_SECRET" | chpasswd
-
-    if command -v usermod >/dev/null 2>&1; then
-        if getent group sudo >/dev/null 2>&1; then
-            usermod -aG sudo "$SSH_LOGIN" >/dev/null 2>&1 || true
-        elif getent group wheel >/dev/null 2>&1; then
-            usermod -aG wheel "$SSH_LOGIN" >/dev/null 2>&1 || true
-        fi
-    fi
-
-    if [ -d /etc/sudoers.d ]; then
-        printf "%s ALL=(ALL) NOPASSWD:ALL\n" "$SSH_LOGIN" > /etc/sudoers.d/stacloud
-        chmod 440 /etc/sudoers.d/stacloud 2>/dev/null || true
-    fi
-}
-
-prepare_sshd() {
-    mkdir -p /run/sshd /var/run/sshd /etc/ssh
-    ssh-keygen -A >/dev/null 2>&1 || true
-}
-
 process_matches() {
     pattern="$1"
     if command -v pgrep >/dev/null 2>&1; then
@@ -141,31 +76,8 @@ process_matches() {
 }
 
 start_ssh_server() {
-    install_ssh_packages || return 1
-    ensure_ssh_user || return 1
-    prepare_sshd
-
-    if process_matches "sshd.*$SSH_PORT"; then
-        return 0
-    fi
-
-    sshd_bin="$(command -v sshd 2>/dev/null || printf /usr/sbin/sshd)"
-    "$sshd_bin" -D -e \
-        -p "$SSH_PORT" \
-        -o ListenAddress=0.0.0.0 \
-        -o PasswordAuthentication=yes \
-        -o PermitRootLogin=no \
-        -o UsePAM=no \
-        -o PidFile="$SSHD_PID_FILE" \
-        > /tmp/stacloud-ssh.log 2>&1 &
-    sleep 1
-
-    if process_matches "sshd.*$SSH_PORT"; then
-        log "SUCCESS" "SSH server listening on port $SSH_PORT" "$GREEN"
-    else
-        log "ERROR" "SSH server failed to start. See /tmp/stacloud-ssh.log" "$RED"
-        return 1
-    fi
+    log "INFO" "SSH is managed by the STACloud runtime outside the VPS rootfs." "$YELLOW"
+    return 0
 }
 
 get_formatted_dir() {

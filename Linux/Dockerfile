@@ -25,17 +25,15 @@ RUN apt-get update \
         curl \
         iproute2 \
         jq \
+        openssh-server \
         passwd \
-        proot \
         tar \
         xz-utils \
-    && rm -rf /var/lib/apt/lists/* \
-    && ln -sf /usr/bin/proot /usr/local/bin/proot
+    && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -d /home/container -s /bin/sh container \
     && ln -s /home/container /nonexistent
 
-USER container
 WORKDIR /home/container
 
 COPY --chown=container:container ./scripts/entrypoint.sh /entrypoint.sh
@@ -44,7 +42,11 @@ COPY --chown=container:container ./scripts/helper.sh /helper.sh
 COPY --chown=container:container ./scripts/run.sh /run.sh
 COPY --chown=container:container ./scripts/common.sh /common.sh
 COPY --chown=container:container ./scripts/vnc/install.sh /vnc_install.sh
+COPY ./scripts/ssh.sh /ssh.sh
+COPY ./scripts/stacloud-ssh-shell.sh /usr/local/bin/stacloud-ssh-shell
 
-RUN chmod +x /entrypoint.sh /install.sh /helper.sh /run.sh /common.sh /vnc_install.sh
+RUN chmod +x /entrypoint.sh /install.sh /helper.sh /run.sh /common.sh /vnc_install.sh /ssh.sh /usr/local/bin/stacloud-ssh-shell \
+    && mkdir -p /run/sshd \
+    && { grep -qxF /usr/local/bin/stacloud-ssh-shell /etc/shells || echo /usr/local/bin/stacloud-ssh-shell >> /etc/shells; }
 
 CMD ["/bin/sh", "/entrypoint.sh"]
