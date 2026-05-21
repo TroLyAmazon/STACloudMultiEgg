@@ -11,9 +11,7 @@ if [ ! -e "$HOME/.rootfs_installed" ]; then
         --rootfs="/" \
         -0 -w "/root" \
         -b /dev -b /sys -b /proc \
-        --kill-on-exit \
         /bin/sh "/install.sh" || exit 1
 fi
 
 sh /helper.sh
-

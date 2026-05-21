@@ -15,6 +15,4 @@ ensure_runtime_scripts
     --rootfs="$HOME" \
     -0 -w "/home/container" \
     -b /dev -b /sys -b /proc \
-    --kill-on-exit \
     /bin/sh "/run.sh"
-
