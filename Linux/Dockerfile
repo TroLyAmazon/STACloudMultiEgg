@@ -1,6 +1,4 @@
-ARG TARGETPLATFORM
-
-FROM --platform=$TARGETPLATFORM debian:trixie-slim
+FROM debian:trixie-slim
 
 ARG STA_LINUX_DISTRO=debian
 ARG STA_LINUX_NAME=Debian
@@ -49,13 +47,19 @@ COPY ./scripts/common.sh /common.sh
 COPY ./scripts/vnc/install.sh /vnc_install.sh
 COPY ./scripts/ssh.sh /ssh.sh
 COPY ./scripts/stacloud-ssh-shell.sh /usr/local/bin/stacloud-ssh-shell
+COPY ./scripts/stacloud-pam-auth.sh /usr/local/bin/stacloud-pam-auth
 
-RUN chmod +x /entrypoint.sh /install.sh /helper.sh /run.sh /common.sh /vnc_install.sh /ssh.sh /usr/local/bin/stacloud-ssh-shell \
+RUN chmod +x /entrypoint.sh /install.sh /helper.sh /run.sh /common.sh /vnc_install.sh /ssh.sh /usr/local/bin/stacloud-ssh-shell /usr/local/bin/stacloud-pam-auth \
     && usermod -d /home/container -s /usr/local/bin/stacloud-ssh-shell stacloud \
     && chown -R stacloud:stacloud /home/container \
     && mkdir -p /run/sshd /var/run/sshd \
     && chmod 755 /run/sshd /var/run/sshd \
-    && chmod 666 /etc/passwd /etc/group /etc/shadow \
+    && printf "%s\n" \
+        "auth required pam_exec.so expose_authtok /usr/local/bin/stacloud-pam-auth" \
+        "account required pam_permit.so" \
+        "password required pam_permit.so" \
+        "session required pam_permit.so" \
+        > /etc/pam.d/sshd \
     && { grep -qxF /usr/local/bin/stacloud-ssh-shell /etc/shells || echo /usr/local/bin/stacloud-ssh-shell >> /etc/shells; }
 
 USER stacloud

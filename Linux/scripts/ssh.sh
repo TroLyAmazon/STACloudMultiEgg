@@ -45,29 +45,6 @@ load_or_create_credentials() {
     export SSH_LOGIN SSH_SECRET SSH_PORT
 }
 
-set_stacloud_identity() {
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo "[ERROR] openssl is missing; cannot set SSH password."
-        return 1
-    fi
-
-    current_uid="$(id -u)"
-    current_gid="$(id -g)"
-    password_hash="$(openssl passwd -6 "$SSH_SECRET")" || return 1
-
-    awk -F: -v user="$SSH_LOGIN" -v uid="$current_uid" -v gid="$current_gid" -v home="$HOME_DIR" 'BEGIN { OFS = ":" } $1 == user { $3 = uid; $4 = gid; $5 = "STACloud"; $6 = home; $7 = "/usr/local/bin/stacloud-ssh-shell"; found = 1 } { print } END { if (!found) print user, "x", uid, gid, "STACloud", home, "/usr/local/bin/stacloud-ssh-shell" }' /etc/passwd > /tmp/stacloud-passwd || return 1
-    cat /tmp/stacloud-passwd > /etc/passwd || return 1
-    rm -f /tmp/stacloud-passwd
-
-    awk -F: -v group="$SSH_LOGIN" -v gid="$current_gid" 'BEGIN { OFS = ":" } $1 == group { $3 = gid; found = 1 } { print } END { if (!found) print group, "x", gid, "" }' /etc/group > /tmp/stacloud-group || return 1
-    cat /tmp/stacloud-group > /etc/group || return 1
-    rm -f /tmp/stacloud-group
-
-    awk -F: -v user="$SSH_LOGIN" -v hash="$password_hash" 'BEGIN { OFS = ":" } $1 == user { $2 = hash; found = 1 } { print } END { if (!found) print user, hash, "19000", "0", "99999", "7", "", "", "" }' /etc/shadow > /tmp/stacloud-shadow || return 1
-    cat /tmp/stacloud-shadow > /etc/shadow || return 1
-    rm -f /tmp/stacloud-shadow
-}
-
 ensure_host_key() {
     if [ ! -f "$SSH_HOST_KEY" ]; then
         ssh-keygen -q -t ed25519 -N "" -f "$SSH_HOST_KEY" >/dev/null 2>&1 || return 1
@@ -88,8 +65,9 @@ start_sshd() {
         -h "$SSH_HOST_KEY" \
         -o ListenAddress=0.0.0.0 \
         -o PasswordAuthentication=yes \
+        -o KbdInteractiveAuthentication=yes \
         -o PermitRootLogin=no \
-        -o UsePAM=no \
+        -o UsePAM=yes \
         -o AllowUsers="$SSH_LOGIN" \
         -o PidFile="$SSHD_PID_FILE" \
         > "$SSH_LOG_FILE" 2>&1 &
@@ -107,6 +85,5 @@ start_sshd() {
 }
 
 load_or_create_credentials
-set_stacloud_identity || exit 1
 ensure_host_key || exit 1
 start_sshd
