@@ -1,0 +1,228 @@
+{
+  "images": [
+    {
+      "label": "Rocky Linux 8",
+      "tag": "rocky_linux_8",
+      "distro": "rockylinux",
+      "name": "Rocky Linux 8",
+      "version": "8",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Rocky Linux 9",
+      "tag": "rocky_linux_9",
+      "distro": "rockylinux",
+      "name": "Rocky Linux 9",
+      "version": "9",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Rocky Linux 10",
+      "tag": "rocky_linux_10",
+      "distro": "rockylinux",
+      "name": "Rocky Linux 10",
+      "version": "10",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "AlmaLinux 8",
+      "tag": "almalinux_8",
+      "distro": "almalinux",
+      "name": "AlmaLinux 8",
+      "version": "8",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "AlmaLinux 9",
+      "tag": "almalinux_9",
+      "distro": "almalinux",
+      "name": "AlmaLinux 9",
+      "version": "9",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "AlmaLinux 10",
+      "tag": "almalinux_10",
+      "distro": "almalinux",
+      "name": "AlmaLinux 10",
+      "version": "10",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "CentOS Stream 9",
+      "tag": "centos_stream_9",
+      "distro": "centos",
+      "name": "CentOS Stream 9",
+      "version": "9-Stream",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "CentOS Stream 10",
+      "tag": "centos_stream_10",
+      "distro": "centos",
+      "name": "CentOS Stream 10",
+      "version": "10-Stream",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Oracle Linux 8",
+      "tag": "oracle_linux_8",
+      "distro": "oracle",
+      "name": "Oracle Linux 8",
+      "version": "8",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Oracle Linux 9",
+      "tag": "oracle_linux_9",
+      "distro": "oracle",
+      "name": "Oracle Linux 9",
+      "version": "9",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Ubuntu 22.04 LTS",
+      "tag": "ubuntu_22.04",
+      "distro": "ubuntu",
+      "name": "Ubuntu 22.04 LTS",
+      "version": "jammy",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Ubuntu 24.04 LTS",
+      "tag": "ubuntu_24.04",
+      "distro": "ubuntu",
+      "name": "Ubuntu 24.04 LTS",
+      "version": "noble",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Ubuntu 25.10",
+      "tag": "ubuntu_25.10",
+      "distro": "ubuntu",
+      "name": "Ubuntu 25.10",
+      "version": "questing",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Ubuntu 26.04 LTS",
+      "tag": "ubuntu_26.04",
+      "distro": "ubuntu",
+      "name": "Ubuntu 26.04 LTS",
+      "version": "resolute",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Debian 11 Bullseye",
+      "tag": "debian_11",
+      "distro": "debian",
+      "name": "Debian 11 Bullseye",
+      "version": "bullseye",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Debian 12 Bookworm",
+      "tag": "debian_12",
+      "distro": "debian",
+      "name": "Debian 12 Bookworm",
+      "version": "bookworm",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Debian 13 Trixie",
+      "tag": "debian_13",
+      "distro": "debian",
+      "name": "Debian 13 Trixie",
+      "version": "trixie",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Debian Forky",
+      "tag": "debian_forky",
+      "distro": "debian",
+      "name": "Debian Forky",
+      "version": "forky",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Kali Linux current",
+      "tag": "kali_linux",
+      "distro": "kali",
+      "name": "Kali Linux current",
+      "version": "current",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Arch Linux current",
+      "tag": "arch_linux",
+      "distro": "archlinux",
+      "name": "Arch Linux current",
+      "version": "current",
+      "platforms": "linux/amd64,linux/arm64"
+    },
+    {
+      "label": "Linux Mint 21 Vanessa",
+      "tag": "linux_mint_21",
+      "distro": "mint",
+      "name": "Linux Mint 21 Vanessa",
+      "version": "vanessa",
+      "platforms": "linux/amd64"
+    },
+    {
+      "label": "Linux Mint 21.1 Vera",
+      "tag": "linux_mint_21.1",
+      "distro": "mint",
+      "name": "Linux Mint 21.1 Vera",
+      "version": "vera",
+      "platforms": "linux/amd64"
+    },
+    {
+      "label": "Linux Mint 21.2 Victoria",
+      "tag": "linux_mint_21.2",
+      "distro": "mint",
+      "name": "Linux Mint 21.2 Victoria",
+      "version": "victoria",
+      "platforms": "linux/amd64"
+    },
+    {
+      "label": "Linux Mint 21.3 Virginia",
+      "tag": "linux_mint_21.3",
+      "distro": "mint",
+      "name": "Linux Mint 21.3 Virginia",
+      "version": "virginia",
+      "platforms": "linux/amd64"
+    },
+    {
+      "label": "Linux Mint 22 Wilma",
+      "tag": "linux_mint_22",
+      "distro": "mint",
+      "name": "Linux Mint 22 Wilma",
+      "version": "wilma",
+      "platforms": "linux/amd64"
+    },
+    {
+      "label": "Linux Mint 22.1 Xia",
+      "tag": "linux_mint_22.1",
+      "distro": "mint",
+      "name": "Linux Mint 22.1 Xia",
+      "version": "xia",
+      "platforms": "linux/amd64"
+    },
+    {
+      "label": "Linux Mint 22.2 Zara",
+      "tag": "linux_mint_22.2",
+      "distro": "mint",
+      "name": "Linux Mint 22.2 Zara",
+      "version": "zara",
+      "platforms": "linux/amd64"
+    },
+    {
+      "label": "Linux Mint 22.3 Zena",
+      "tag": "linux_mint_22.3",
+      "distro": "mint",
+      "name": "Linux Mint 22.3 Zena",
+      "version": "zena",
+      "platforms": "linux/amd64"
+    }
+  ]
+}

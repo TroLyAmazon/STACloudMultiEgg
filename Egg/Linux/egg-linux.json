@@ -1,0 +1,130 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED FOR STACLOUD",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2026-05-21T00:00:00+00:00",
+    "name": "STACloud Linux VPS",
+    "author": "stacloud.dev@gmail.com",
+    "uuid": "290f3313-7730-4487-bba0-d585cd78a48c",
+    "description": "STACloud Linux VPS egg with SSH credentials generated on first start and optional browser VNC through noVNC. Based on the PRoot/rootfs flow from ysdragon/Pterodactyl-VPS-Egg.",
+    "features": null,
+    "docker_images": {
+        "Rocky Linux 8": "ghcr.io/sta-cloud-dev/linux:rocky_linux_8",
+        "Rocky Linux 9": "ghcr.io/sta-cloud-dev/linux:rocky_linux_9",
+        "Rocky Linux 10": "ghcr.io/sta-cloud-dev/linux:rocky_linux_10",
+        "AlmaLinux 8": "ghcr.io/sta-cloud-dev/linux:almalinux_8",
+        "AlmaLinux 9": "ghcr.io/sta-cloud-dev/linux:almalinux_9",
+        "AlmaLinux 10": "ghcr.io/sta-cloud-dev/linux:almalinux_10",
+        "CentOS Stream 9": "ghcr.io/sta-cloud-dev/linux:centos_stream_9",
+        "CentOS Stream 10": "ghcr.io/sta-cloud-dev/linux:centos_stream_10",
+        "Oracle Linux 8": "ghcr.io/sta-cloud-dev/linux:oracle_linux_8",
+        "Oracle Linux 9": "ghcr.io/sta-cloud-dev/linux:oracle_linux_9",
+        "Ubuntu 22.04 LTS": "ghcr.io/sta-cloud-dev/linux:ubuntu_22.04",
+        "Ubuntu 24.04 LTS": "ghcr.io/sta-cloud-dev/linux:ubuntu_24.04",
+        "Ubuntu 25.10": "ghcr.io/sta-cloud-dev/linux:ubuntu_25.10",
+        "Ubuntu 26.04 LTS": "ghcr.io/sta-cloud-dev/linux:ubuntu_26.04",
+        "Debian 11 Bullseye": "ghcr.io/sta-cloud-dev/linux:debian_11",
+        "Debian 12 Bookworm": "ghcr.io/sta-cloud-dev/linux:debian_12",
+        "Debian 13 Trixie": "ghcr.io/sta-cloud-dev/linux:debian_13",
+        "Debian Forky": "ghcr.io/sta-cloud-dev/linux:debian_forky",
+        "Kali Linux current": "ghcr.io/sta-cloud-dev/linux:kali_linux",
+        "Arch Linux current": "ghcr.io/sta-cloud-dev/linux:arch_linux",
+        "Linux Mint 21 Vanessa": "ghcr.io/sta-cloud-dev/linux:linux_mint_21",
+        "Linux Mint 21.1 Vera": "ghcr.io/sta-cloud-dev/linux:linux_mint_21.1",
+        "Linux Mint 21.2 Victoria": "ghcr.io/sta-cloud-dev/linux:linux_mint_21.2",
+        "Linux Mint 21.3 Virginia": "ghcr.io/sta-cloud-dev/linux:linux_mint_21.3",
+        "Linux Mint 22 Wilma": "ghcr.io/sta-cloud-dev/linux:linux_mint_22",
+        "Linux Mint 22.1 Xia": "ghcr.io/sta-cloud-dev/linux:linux_mint_22.1",
+        "Linux Mint 22.2 Zara": "ghcr.io/sta-cloud-dev/linux:linux_mint_22.2",
+        "Linux Mint 22.3 Zena": "ghcr.io/sta-cloud-dev/linux:linux_mint_22.3"
+    },
+    "file_denylist": [],
+    "startup": "./run.sh",
+    "config": {
+        "files": "{\r\n    \"vps.config\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"internalip\": \"{{server.build.default.ip}}\",\r\n            \"ssh\": \"{{server.build.default.port}}\",\r\n            \"novnc\": \"{{server.build.env.NOVNC_PORT}}\",\r\n            \"webapp\": \"{{server.build.env.WEB_APP_PORT}}\",\r\n            \"api\": \"{{server.build.env.API_PORT}}\",\r\n            \"botpanel\": \"{{server.build.env.BOT_PANEL_PORT}}\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \"STACloud Linux VPS\"\r\n}",
+        "logs": "{}",
+        "stop": "exit"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\ncd /mnt/server\r\necho \"STACloud Linux VPS image handles rootfs installation on first start.\"\r\nexit 0",
+            "container": "ghcr.io/sta-cloud-dev/linux:debian_13",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "SSH",
+            "description": "SSH port. Default is the primary allocation assigned by the panel.",
+            "env_variable": "SSH_PORT",
+            "default_value": "{{server.build.default.port}}",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|string|max:5",
+            "field_type": "text"
+        },
+        {
+            "name": "user",
+            "description": "SSH username. Leave blank so the image generates a random username on first start.",
+            "env_variable": "SSH_USER",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "password",
+            "description": "SSH password. Leave blank so the image generates a random password on first start.",
+            "env_variable": "SSH_PASSWORD",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "nullable|string|max:128",
+            "field_type": "text"
+        },
+        {
+            "name": "noVNC",
+            "description": "Optional noVNC web port. Blank by default.",
+            "env_variable": "NOVNC_PORT",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:5",
+            "field_type": "text"
+        },
+        {
+            "name": "Web app",
+            "description": "Optional web application port. Blank by default.",
+            "env_variable": "WEB_APP_PORT",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:5",
+            "field_type": "text"
+        },
+        {
+            "name": "API",
+            "description": "Optional API port. Blank by default.",
+            "env_variable": "API_PORT",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:5",
+            "field_type": "text"
+        },
+        {
+            "name": "Bot panel",
+            "description": "Optional bot panel port. Blank by default.",
+            "env_variable": "BOT_PANEL_PORT",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:5",
+            "field_type": "text"
+        }
+    ]
+}

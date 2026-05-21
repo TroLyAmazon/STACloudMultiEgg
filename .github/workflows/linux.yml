@@ -1,0 +1,118 @@
+name: build linux
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Image tag to build"
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - rocky_linux_8
+          - rocky_linux_9
+          - rocky_linux_10
+          - almalinux_8
+          - almalinux_9
+          - almalinux_10
+          - centos_stream_9
+          - centos_stream_10
+          - oracle_linux_8
+          - oracle_linux_9
+          - ubuntu_22.04
+          - ubuntu_24.04
+          - ubuntu_25.10
+          - ubuntu_26.04
+          - debian_11
+          - debian_12
+          - debian_13
+          - debian_forky
+          - kali_linux
+          - arch_linux
+          - linux_mint_21
+          - linux_mint_21.1
+          - linux_mint_21.2
+          - linux_mint_21.3
+          - linux_mint_22
+          - linux_mint_22.1
+          - linux_mint_22.2
+          - linux_mint_22.3
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  prepare:
+    name: prepare matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select image matrix
+        id: matrix
+        shell: bash
+        run: |
+          target='${{ inputs.target }}'
+
+          if [ "$target" = "all" ]; then
+            matrix="$(jq -c '{include: .images}' Linux/images.json)"
+          else
+            matrix="$(jq -c --arg target "$target" '{include: [.images[] | select(.tag == $target)]}' Linux/images.json)"
+          fi
+
+          if [ "$(jq '.include | length' <<< "$matrix")" -eq 0 ]; then
+            echo "No image matrix entry found for target: $target" >&2
+            exit 1
+          fi
+
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: "linux:${{ matrix.tag }}"
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set registry username
+        id: registry
+        run: echo "owner_lower=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:qemu-v7.0.0-28
+
+      - uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --debug
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ steps.registry.outputs.owner_lower }}
+          password: ${{ secrets.USER_TOKEN != '' && secrets.USER_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./Linux
+          file: ./Linux/Dockerfile
+          platforms: ${{ matrix.platforms }}
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            STA_LINUX_DISTRO=${{ matrix.distro }}
+            STA_LINUX_NAME=${{ matrix.name }}
+            STA_LINUX_VERSION=${{ matrix.version }}
+          tags: ghcr.io/sta-cloud-dev/linux:${{ matrix.tag }}
+
