@@ -8,7 +8,7 @@
     "name": "STACloud Linux VPS",
     "author": "stacloud.dev@gmail.com",
     "uuid": "290f3313-7730-4487-bba0-d585cd78a48c",
-    "description": "STACloud Linux VPS egg with SSH credentials generated on first start and optional browser VNC through noVNC. Based on the PRoot/rootfs flow from ysdragon/Pterodactyl-VPS-Egg.",
+    "description": "STACloud Linux VPS egg with SSH credentials generated on first start and optional browser VNC through noVNC.",
     "features": null,
     "docker_images": {
         "Rocky Linux 8": "ghcr.io/sta-cloud-dev/linux:rocky_linux_8",
@@ -50,8 +50,8 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/bash\r\ncd /mnt/server\r\necho \"STACloud Linux VPS image handles rootfs installation on first start.\"\r\nexit 0",
-            "container": "ghcr.io/sta-cloud-dev/linux:debian_13",
+            "script": "#!/bin/bash\r\nmkdir -p /mnt/server\r\ncd /mnt/server || exit 1\r\necho \"STACloud Linux VPS install step complete. Rootfs is prepared on first start.\"\r\nexit 0",
+            "container": "ghcr.io/sta-cloud-dev/linux:installer",
             "entrypoint": "bash"
         }
     },

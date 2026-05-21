@@ -1,10 +1,10 @@
 # STACloud Linux Egg
 
-This folder contains the STACloud Linux VPS egg and Docker runtime based on the PRoot/rootfs flow used by `ysdragon/Pterodactyl-VPS-Egg`.
+This folder contains the STACloud Linux VPS egg, installer image, and Docker runtime.
 
 ## Images
 
-The GitHub Actions workflow builds the versioned tags listed in `images.json`, including:
+The GitHub Actions workflow builds `ghcr.io/sta-cloud-dev/linux:installer` and the versioned tags listed in `images.json`, including:
 
 - Rocky Linux 8, 9, 10
 - AlmaLinux 8, 9, 10
@@ -20,7 +20,7 @@ Linux Mint is built for `linux/amd64` only because the Linux Containers rootfs i
 
 ## Egg
 
-Import `../Egg/Linux/egg-linux.json` into Pterodactyl/Pelican.
+Import `../Egg/Linux/egg-linux.json` into your panel.
 
 Variables:
 

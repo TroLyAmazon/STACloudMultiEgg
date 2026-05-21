@@ -1,7 +1,5 @@
-FROM --platform=$TARGETOS/$TARGETARCH alpine:3.23
+FROM --platform=$TARGETOS/$TARGETARCH debian:trixie-slim
 
-ARG TARGETARCH
-ARG PROOT_VERSION=5.4.0
 ARG STA_LINUX_DISTRO=debian
 ARG STA_LINUX_NAME=Debian
 ARG STA_LINUX_VERSION=trixie
@@ -9,7 +7,7 @@ ARG STA_LINUX_VERSION=trixie
 LABEL author="STACloud" maintainer="stacloud.dev@gmail.com"
 LABEL org.opencontainers.image.source="https://github.com/STA-Cloud-Dev/STACloudMultiEgg"
 LABEL org.opencontainers.image.licenses=MIT
-LABEL org.opencontainers.image.description="STACloud Linux VPS runtime for Pterodactyl/Pelican"
+LABEL org.opencontainers.image.description="STACloud Linux VPS runtime"
 
 ENV LANG=en_US.UTF-8
 ENV USER=container
@@ -18,26 +16,23 @@ ENV STA_LINUX_DISTRO=${STA_LINUX_DISTRO}
 ENV STA_LINUX_NAME=${STA_LINUX_NAME}
 ENV STA_LINUX_VERSION=${STA_LINUX_VERSION}
 
-RUN apk add --no-cache \
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
         bash \
         ca-certificates \
         curl \
         iproute2 \
         jq \
-        shadow \
+        passwd \
+        proot \
         tar \
-        xz
+        xz-utils \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -sf /usr/bin/proot /usr/local/bin/proot
 
-RUN case "$TARGETARCH" in \
-        amd64) proot_arch="x86_64" ;; \
-        arm64) proot_arch="aarch64" ;; \
-        riscv64) proot_arch="riscv64" ;; \
-        *) echo "Unsupported TARGETARCH=$TARGETARCH" >&2; exit 1 ;; \
-    esac \
-    && curl -fsSL "https://github.com/ysdragon/proot-static/releases/download/v${PROOT_VERSION}/proot-${proot_arch}-static" -o /usr/local/bin/proot \
-    && chmod 755 /usr/local/bin/proot
-
-RUN adduser -D -h /home/container -s /bin/sh container \
+RUN useradd -m -d /home/container -s /bin/sh container \
     && ln -s /home/container /nonexistent
 
 USER container
@@ -53,4 +48,3 @@ COPY --chown=container:container ./scripts/vnc/install.sh /vnc_install.sh
 RUN chmod +x /entrypoint.sh /install.sh /helper.sh /run.sh /common.sh /vnc_install.sh
 
 CMD ["/bin/sh", "/entrypoint.sh"]
-

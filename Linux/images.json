@@ -1,4 +1,14 @@
 {
+  "installers": [
+    {
+      "label": "STACloud Linux Installer",
+      "tag": "installer",
+      "name": "STACloud Linux Installer",
+      "platforms": "linux/amd64,linux/arm64",
+      "context": "./Linux/installer",
+      "file": "./Linux/installer/Dockerfile"
+    }
+  ],
   "images": [
     {
       "label": "Rocky Linux 8",

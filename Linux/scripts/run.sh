@@ -8,8 +8,9 @@ MAX_HISTORY=1000
 CREDENTIALS_FILE="/.stacloud_credentials"
 GUI_CONFIG_FILE="/gui_config.yml"
 VNC_DIR="$HOME/.vnc"
-SSH_BINARY="/usr/local/bin/ssh"
-SSH_CONFIG="/ssh_config.yml"
+SSHD_PID_FILE="/tmp/stacloud-sshd.pid"
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 
 detect_distro() {
     if [ -f /etc/os-release ]; then
@@ -66,72 +67,68 @@ write_runtime_config() {
     fi
 }
 
-install_fetcher() {
-    if command -v wget >/dev/null 2>&1 || command -v curl >/dev/null 2>&1; then
+install_ssh_packages() {
+    if command -v sshd >/dev/null 2>&1 || [ -x /usr/sbin/sshd ]; then
         return 0
     fi
 
     distro="$(detect_distro)"
+    log "INFO" "Installing OpenSSH server" "$YELLOW"
+
     case "$distro" in
         debian|ubuntu|linuxmint|kali)
-            apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq wget curl ca-certificates
+            apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq openssh-server sudo passwd procps
             ;;
         rocky|almalinux|centos|ol)
             if command -v dnf >/dev/null 2>&1; then
-                dnf install -y -q wget curl ca-certificates
+                dnf install -y -q openssh-server sudo passwd shadow-utils procps-ng
+            elif command -v microdnf >/dev/null 2>&1; then
+                microdnf install -y openssh-server sudo passwd shadow-utils procps-ng
             else
-                yum install -y -q wget curl ca-certificates
+                yum install -y -q openssh-server sudo passwd shadow-utils procps-ng
             fi
             ;;
         arch)
-            pacman -Sy --noconfirm --needed wget curl ca-certificates
+            pacman -Sy --noconfirm --needed openssh sudo shadow procps-ng
             ;;
         *)
-            log "ERROR" "Cannot install wget/curl for distro: $distro" "$RED"
+            log "ERROR" "Cannot install OpenSSH for distro: $distro" "$RED"
             return 1
             ;;
     esac
 }
 
-download_file() {
-    url="$1"
-    dest="$2"
+ensure_ssh_user() {
+    if ! id "$SSH_LOGIN" >/dev/null 2>&1; then
+        if command -v useradd >/dev/null 2>&1; then
+            useradd -m -s /bin/bash "$SSH_LOGIN"
+        elif command -v adduser >/dev/null 2>&1; then
+            adduser -D -h "/home/$SSH_LOGIN" -s /bin/sh "$SSH_LOGIN"
+        else
+            log "ERROR" "No user creation tool found." "$RED"
+            return 1
+        fi
+    fi
 
-    if command -v wget >/dev/null 2>&1; then
-        wget -q -O "$dest" "$url"
-    else
-        curl -fsSL -o "$dest" "$url"
+    printf "%s:%s\n" "$SSH_LOGIN" "$SSH_SECRET" | chpasswd
+
+    if command -v usermod >/dev/null 2>&1; then
+        if getent group sudo >/dev/null 2>&1; then
+            usermod -aG sudo "$SSH_LOGIN" >/dev/null 2>&1 || true
+        elif getent group wheel >/dev/null 2>&1; then
+            usermod -aG wheel "$SSH_LOGIN" >/dev/null 2>&1 || true
+        fi
+    fi
+
+    if [ -d /etc/sudoers.d ]; then
+        printf "%s ALL=(ALL) NOPASSWD:ALL\n" "$SSH_LOGIN" > /etc/sudoers.d/stacloud
+        chmod 440 /etc/sudoers.d/stacloud 2>/dev/null || true
     fi
 }
 
-ensure_ssh_binary() {
-    if [ -x "$SSH_BINARY" ]; then
-        return 0
-    fi
-
-    install_fetcher || return 1
-    arch="$(detect_architecture)" || return 1
-    url="https://github.com/ysdragon/ssh/releases/latest/download/ssh-$arch"
-
-    log "INFO" "Installing SSH server binary" "$YELLOW"
-    download_file "$url" "$SSH_BINARY" || {
-        log "ERROR" "Failed to download SSH server from $url" "$RED"
-        return 1
-    }
-    chmod +x "$SSH_BINARY"
-}
-
-write_ssh_config() {
-    cat > "$SSH_CONFIG" << EOF
-ssh:
-  port: "$SSH_PORT"
-  user: "$SSH_LOGIN"
-  password: "$SSH_SECRET"
-  timeout: 0
-
-sftp:
-  enable: true
-EOF
+prepare_sshd() {
+    mkdir -p /run/sshd /var/run/sshd /etc/ssh
+    ssh-keygen -A >/dev/null 2>&1 || true
 }
 
 process_matches() {
@@ -144,17 +141,26 @@ process_matches() {
 }
 
 start_ssh_server() {
-    ensure_ssh_binary || return 1
-    write_ssh_config
+    install_ssh_packages || return 1
+    ensure_ssh_user || return 1
+    prepare_sshd
 
-    if process_matches "$SSH_BINARY"; then
+    if process_matches "sshd.*$SSH_PORT"; then
         return 0
     fi
 
-    "$SSH_BINARY" > /tmp/stacloud-ssh.log 2>&1 &
+    sshd_bin="$(command -v sshd 2>/dev/null || printf /usr/sbin/sshd)"
+    "$sshd_bin" -D -e \
+        -p "$SSH_PORT" \
+        -o ListenAddress=0.0.0.0 \
+        -o PasswordAuthentication=yes \
+        -o PermitRootLogin=no \
+        -o UsePAM=no \
+        -o PidFile="$SSHD_PID_FILE" \
+        > /tmp/stacloud-ssh.log 2>&1 &
     sleep 1
 
-    if process_matches "$SSH_BINARY"; then
+    if process_matches "sshd.*$SSH_PORT"; then
         log "SUCCESS" "SSH server listening on port $SSH_PORT" "$GREEN"
     else
         log "ERROR" "SSH server failed to start. See /tmp/stacloud-ssh.log" "$RED"

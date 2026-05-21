@@ -10,6 +10,7 @@ on:
         type: choice
         options:
           - all
+          - installer
           - rocky_linux_8
           - rocky_linux_9
           - rocky_linux_10
@@ -58,9 +59,9 @@ jobs:
           target='${{ inputs.target }}'
 
           if [ "$target" = "all" ]; then
-            matrix="$(jq -c '{include: .images}' Linux/images.json)"
+            matrix="$(jq -c '{include: (.installers + .images)}' Linux/images.json)"
           else
-            matrix="$(jq -c --arg target "$target" '{include: [.images[] | select(.tag == $target)]}' Linux/images.json)"
+            matrix="$(jq -c --arg target "$target" '{include: [(.installers + .images)[] | select(.tag == $target)]}' Linux/images.json)"
           fi
 
           if [ "$(jq '.include | length' <<< "$matrix")" -eq 0 ]; then
@@ -104,8 +105,8 @@ jobs:
 
       - uses: docker/build-push-action@v6
         with:
-          context: ./Linux
-          file: ./Linux/Dockerfile
+          context: ${{ matrix.context || './Linux' }}
+          file: ${{ matrix.file || './Linux/Dockerfile' }}
           platforms: ${{ matrix.platforms }}
           push: true
           cache-from: type=gha
@@ -115,4 +116,3 @@ jobs:
             STA_LINUX_NAME=${{ matrix.name }}
             STA_LINUX_VERSION=${{ matrix.version }}
           tags: ghcr.io/sta-cloud-dev/linux:${{ matrix.tag }}
-
