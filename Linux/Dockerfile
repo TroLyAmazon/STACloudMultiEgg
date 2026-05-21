@@ -24,10 +24,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src/sshserver
-COPY ./sshserver/go.mod ./
+COPY ./sshserver/go.mod ./sshserver/go.sum ./
 RUN go mod download
 COPY ./sshserver/main.go ./
-RUN go build -trimpath -ldflags="-s -w" -o /out/stacloud-ssh-server .
+RUN mkdir -p /out \
+    && go build -trimpath -ldflags="-s -w" -o /out/stacloud-ssh-server .
 
 FROM --platform=$TARGETPLATFORM debian:trixie-slim
 
