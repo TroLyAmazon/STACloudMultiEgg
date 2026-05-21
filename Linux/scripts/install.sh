@@ -82,6 +82,11 @@ download_and_extract_rootfs() {
     mkdir -p "$ROOTFS_DIR/home/container"
 }
 
+configure_dns() {
+    mkdir -p "$ROOTFS_DIR/etc"
+    printf "nameserver 1.1.1.1\nnameserver 1.0.0.1\n" > "$ROOTFS_DIR/etc/resolv.conf" 2>/dev/null || true
+}
+
 post_install_config() {
     distro="$1"
     if [ "$distro" = "archlinux" ] && [ -f "$ROOTFS_DIR/etc/pacman.conf" ]; then
@@ -99,6 +104,22 @@ post_install_config() {
             rm -f "$ROOTFS_DIR/usr/bin/$target_name"
             ln -s "$gnu_name" "$ROOTFS_DIR/usr/bin/$target_name"
         done
+    fi
+}
+
+refresh_package_indexes() {
+    if [ -x "$ROOTFS_DIR/usr/bin/apt-get" ] || [ -x "$ROOTFS_DIR/bin/apt-get" ]; then
+        log "INFO" "Updating APT package indexes" "$GREEN"
+        if ! /usr/bin/proot \
+            -r "$ROOTFS_DIR" \
+            -0 \
+            -w / \
+            -b /dev \
+            -b /proc \
+            -b /sys \
+            /bin/sh -lc 'apt-get update'; then
+            log "WARNING" "APT package index update failed; run apt update inside the VPS before installing packages." "$YELLOW"
+        fi
     fi
 }
 
@@ -121,7 +142,9 @@ ARCH_ALT="$(detect_architecture)" || exit 1
 
 check_network
 download_and_extract_rootfs "$DISTRO_ID" "$DISTRO_VERSION" "$ARCH_ALT" "$DISTRO_NAME"
+configure_dns
 post_install_config "$DISTRO_ID"
+refresh_package_indexes
 copy_runtime_scripts
 touch "$ROOTFS_DIR/.rootfs_installed"
 

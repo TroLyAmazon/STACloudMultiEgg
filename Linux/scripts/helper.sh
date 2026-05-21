@@ -2,7 +2,7 @@
 
 ensure_runtime_scripts() {
     for file in common.sh run.sh vnc_install.sh; do
-        if [ ! -f "$HOME/$file" ] && [ -f "/$file" ]; then
+        if [ -f "/$file" ]; then
             cp "/$file" "$HOME/$file"
             chmod +x "$HOME/$file"
         fi

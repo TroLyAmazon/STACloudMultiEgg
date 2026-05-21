@@ -238,23 +238,30 @@ main() {
     distro="$(detect_distro)"
     log "INFO" "Detected distribution: $distro" "$GREEN"
 
-    print_de_selection_menu
-    read -r de_choice
-    case "$de_choice" in
-        0) log "INFO" "Installation cancelled" "$YELLOW"; return 0 ;;
-        1) de="xfce4" ;;
-        2) de="lxde" ;;
-        3) de="lxqt" ;;
-        4) de="mate" ;;
-        *) log "ERROR" "Invalid selection" "$RED"; return 1 ;;
-    esac
+    if [ "$1" = "auto" ]; then
+        de="${GUI_DESKTOP:-xfce4}"
+        vnc_port="${VNC_PORT:-5901}"
+        novnc_port="${NOVNC_PORT:-6080}"
+        gui_password="${VNC_PASSWORD:-${SSH_SECRET:-password}}"
+    else
+        print_de_selection_menu
+        read -r de_choice
+        case "$de_choice" in
+            0) log "INFO" "Installation cancelled" "$YELLOW"; return 0 ;;
+            1) de="xfce4" ;;
+            2) de="lxde" ;;
+            3) de="lxqt" ;;
+            4) de="mate" ;;
+            *) log "ERROR" "Invalid selection" "$RED"; return 1 ;;
+        esac
 
-    vnc_port="$(get_port_input "VNC" "${VNC_PORT:-5901}")"
-    novnc_port="$(get_port_input "noVNC web" "${NOVNC_PORT:-6080}")"
+        vnc_port="$(get_port_input "VNC" "${VNC_PORT:-5901}")"
+        novnc_port="$(get_port_input "noVNC web" "${NOVNC_PORT:-6080}")"
 
-    printf "%bEnter VNC password (blank uses generated SSH password):%b\n" "$YELLOW" "$NC"
-    read -r gui_password
-    gui_password="${gui_password:-${VNC_PASSWORD:-${SSH_SECRET:-password}}}"
+        printf "%bEnter VNC password (blank uses generated SSH password):%b\n" "$YELLOW" "$NC"
+        read -r gui_password
+        gui_password="${gui_password:-${VNC_PASSWORD:-${SSH_SECRET:-password}}}"
+    fi
 
     de_startup="$(install_desktop_environment "$distro" "$de")" || return 1
     [ -n "$de_startup" ] || return 1
@@ -269,7 +276,6 @@ main() {
     printf "Start command: start-novnc\n"
 }
 
-if [ "$1" = "install" ] || [ -z "$1" ]; then
-    main
+if [ "$1" = "install" ] || [ "$1" = "auto" ] || [ -z "$1" ]; then
+    main "$1"
 fi
-

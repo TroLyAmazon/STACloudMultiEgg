@@ -60,17 +60,21 @@ start_sshd() {
         fi
     fi
 
-    /usr/sbin/sshd -D -e \
+    /usr/sbin/sshd -D -e -E "$SSH_LOG_FILE" \
         -p "$SSH_PORT" \
         -h "$SSH_HOST_KEY" \
         -o ListenAddress=0.0.0.0 \
+        -o LogLevel=VERBOSE \
+        -o StrictModes=no \
         -o PasswordAuthentication=yes \
         -o KbdInteractiveAuthentication=yes \
         -o PermitRootLogin=no \
         -o UsePAM=yes \
         -o AllowUsers="$SSH_LOGIN" \
+        -o ForceCommand=/usr/local/bin/stacloud-ssh-shell \
+        -o PermitTTY=yes \
         -o PidFile="$SSHD_PID_FILE" \
-        > "$SSH_LOG_FILE" 2>&1 &
+        >/dev/null 2>&1 &
 
     ssh_pid="$!"
     printf "%s\n" "$ssh_pid" > "$SSHD_PID_FILE"

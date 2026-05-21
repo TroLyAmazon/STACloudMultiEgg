@@ -187,6 +187,22 @@ install_gui() {
     fi
 }
 
+auto_install_gui() {
+    if [ -f "$GUI_CONFIG_FILE" ]; then
+        return 0
+    fi
+
+    if [ -f /vnc_install.sh ]; then
+        log "INFO" "noVNC port is set; installing XFCE4/VNC automatically." "$YELLOW"
+        export SSH_SECRET NOVNC_PORT VNC_PORT
+        VNC_PORT="${VNC_PORT:-5901}"
+        sh /vnc_install.sh auto
+    else
+        log "ERROR" "VNC installer is missing." "$RED"
+        return 1
+    fi
+}
+
 reinstall_gui() {
     rm -f "$GUI_CONFIG_FILE"
     rm -rf "$VNC_DIR"
@@ -364,6 +380,16 @@ show_system_status() {
     df -h / 2>/dev/null || true
 }
 
+show_fetch_info() {
+    if command -v neofetch >/dev/null 2>&1; then
+        neofetch
+    elif command -v fastfetch >/dev/null 2>&1; then
+        fastfetch
+    else
+        log "WARNING" "neofetch is unavailable on some newer Debian/Ubuntu releases. Try: apt update && apt install fastfetch" "$YELLOW"
+    fi
+}
+
 cleanup() {
     log "INFO" "Session ended." "$GREEN"
     exit 0
@@ -389,6 +415,9 @@ execute_command() {
             ;;
         status)
             show_system_status
+            ;;
+        neofetch)
+            show_fetch_info
             ;;
         reinstall)
             reinstall
@@ -440,8 +469,8 @@ print_main_banner
 start_ssh_server
 print_access_info
 
-if [ -n "$NOVNC_PORT" ] && [ -f "$GUI_CONFIG_FILE" ]; then
-    start_novnc
+if [ -n "$NOVNC_PORT" ]; then
+    auto_install_gui && start_novnc
 fi
 
 if [ -x /autorun.sh ]; then
