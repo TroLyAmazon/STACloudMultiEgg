@@ -63,7 +63,7 @@
             "default_value": "{{server.build.default.port}}",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|string|max:5",
+            "rules": "required|string|max:32",
             "field_type": "text"
         },
         {
