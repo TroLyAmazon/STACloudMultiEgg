@@ -1,6 +1,6 @@
 # STACloud Linux Egg
 
-This folder contains the STACloud Linux VPS egg, installer image, and Docker runtime.
+This folder contains the STACloud Linux VPS egg, installer image, Docker runtime, and non-root SSH server.
 
 ## Images
 
@@ -28,5 +28,7 @@ Variables:
 - `SSH_USER`: left blank in the panel and generated on first start. Not user editable.
 - `SSH_PASSWORD`: left blank in the panel and generated on first start. Not user editable.
 - `noVNC`, `Web app`, `API`, and `Bot panel`: optional port variables, blank by default.
+
+The runtime does not start system OpenSSH and does not create Linux users at container start. The built-in STACloud SSH server runs as the panel-provided container user and opens a root-style shell inside the VPS rootfs.
 
 The web console prints SSH credentials and the noVNC URL when a noVNC port is set. Use `install-gui`, then `start-novnc` to enable browser VNC for a server.

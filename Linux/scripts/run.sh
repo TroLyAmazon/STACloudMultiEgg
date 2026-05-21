@@ -23,29 +23,52 @@ detect_distro() {
 random_string() {
     length="${1:-16}"
     if [ -r /dev/urandom ]; then
-        tr -dc 'A-Za-z0-9' < /dev/urandom | head -c "$length"
+        value="$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c "$length")"
     else
-        date +%s%N | sha256sum | cut -c 1-"$length"
+        value="$(date +%s%N | sha256sum | cut -c 1-"$length")"
     fi
+    [ -n "$value" ] || value="$(date +%s%N | sha256sum | cut -c 1-"$length")"
+    printf "%s" "$value"
+}
+
+random_username() {
+    suffix="$(random_string 10 | tr 'A-Z' 'a-z')"
+    [ -n "$suffix" ] || suffix="$(date +%s)"
+    printf "sta%s" "$suffix"
+}
+
+valid_username() {
+    case "$1" in
+        sta*) ;;
+        *)
+            return 1
+            ;;
+    esac
+    [ "${#1}" -ge 6 ] && [ "${#1}" -le 32 ] || return 1
+    case "$1" in
+        *[!abcdefghijklmnopqrstuvwxyz0123456789]*) return 1 ;;
+    esac
+    return 0
+}
+
+valid_password() {
+    [ -n "$1" ] && [ "${#1}" -ge 12 ] && [ "${#1}" -le 128 ]
 }
 
 load_or_create_credentials() {
     if [ -f "$CREDENTIALS_FILE" ]; then
         . "$CREDENTIALS_FILE"
-    else
-        generated_user="u$(random_string 10 | tr 'A-Z' 'a-z')"
-        generated_password="$(random_string 24)"
-        SSH_LOGIN="${SSH_USER:-$generated_user}"
-        SSH_SECRET="${SSH_PASSWORD:-$generated_password}"
-        {
-            printf "SSH_LOGIN=%s\n" "$SSH_LOGIN"
-            printf "SSH_SECRET=%s\n" "$SSH_SECRET"
-        } > "$CREDENTIALS_FILE"
-        chmod 600 "$CREDENTIALS_FILE" 2>/dev/null || true
     fi
 
-    SSH_LOGIN="${SSH_LOGIN:-root}"
-    SSH_SECRET="${SSH_SECRET:-$(random_string 24)}"
+    valid_username "$SSH_LOGIN" || SSH_LOGIN="$(random_username)"
+    valid_password "$SSH_SECRET" || SSH_SECRET="$(random_string 24)"
+
+    {
+        printf "SSH_LOGIN=%s\n" "$SSH_LOGIN"
+        printf "SSH_SECRET=%s\n" "$SSH_SECRET"
+    } > "$CREDENTIALS_FILE"
+    chmod 600 "$CREDENTIALS_FILE" 2>/dev/null || true
+
     case "$SSH_PORT" in
         ""|"{{SERVER_PORT}}"|"{{server.build.default.port}}")
             SSH_PORT="${SERVER_PORT:-2222}"

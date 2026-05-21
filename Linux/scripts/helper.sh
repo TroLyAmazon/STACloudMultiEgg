@@ -11,4 +11,11 @@ ensure_runtime_scripts() {
 
 ensure_runtime_scripts
 
-exec chroot "$HOME" /bin/sh -lc 'cd /home/container 2>/dev/null || cd /; exec /bin/sh /run.sh'
+exec /usr/local/bin/proot \
+    -r "$HOME" \
+    -0 \
+    -w /home/container \
+    -b /dev \
+    -b /proc \
+    -b /sys \
+    /bin/sh -lc 'cd /home/container 2>/dev/null || cd /; exec /bin/sh /run.sh'

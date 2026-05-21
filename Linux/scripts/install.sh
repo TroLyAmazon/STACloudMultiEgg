@@ -48,7 +48,7 @@ validate_distro() {
 }
 
 check_network() {
-    curl -fsSI "$BASE_URL" >/dev/null 2>&1 || error_exit "Unable to connect to $BASE_URL"
+    curl -fsSI "$BASE_URL" >/dev/null 2>&1 || error_exit "Unable to connect to the STACloud rootfs source"
 }
 
 latest_build_for() {
@@ -72,7 +72,7 @@ download_and_extract_rootfs() {
     archive_url="${rootfs_base}${latest_build}/rootfs.tar.xz"
 
     mkdir -p "$ROOTFS_DIR"
-    log "INFO" "Downloading rootfs: $archive_url" "$GREEN"
+    log "INFO" "Downloading STACloud rootfs" "$GREEN"
     curl -fL "$archive_url" -o "$ROOTFS_DIR/rootfs.tar.xz" || error_exit "Failed to download rootfs"
 
     log "INFO" "Extracting rootfs" "$GREEN"

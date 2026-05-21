@@ -44,7 +44,7 @@
     "startup": "./run.sh",
     "config": {
         "files": "{\r\n    \"vps.config\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"internalip\": \"{{server.build.default.ip}}\",\r\n            \"ssh\": \"{{server.build.default.port}}\",\r\n            \"novnc\": \"{{server.build.env.NOVNC_PORT}}\",\r\n            \"webapp\": \"{{server.build.env.WEB_APP_PORT}}\",\r\n            \"api\": \"{{server.build.env.API_PORT}}\",\r\n            \"botpanel\": \"{{server.build.env.BOT_PANEL_PORT}}\"\r\n        }\r\n    }\r\n}",
-        "startup": "{\r\n    \"done\": \"STACloud Linux VPS\"\r\n}",
+        "startup": "{\r\n    \"done\": \"Access\"\r\n}",
         "logs": "{}",
         "stop": "exit"
     },
