@@ -54,9 +54,8 @@ RUN chmod +x /entrypoint.sh /install.sh /helper.sh /run.sh /common.sh /vnc_insta
     && usermod -d /home/container -s /usr/local/bin/stacloud-ssh-shell stacloud \
     && chown -R stacloud:stacloud /home/container \
     && mkdir -p /run/sshd /var/run/sshd \
-    && ssh-keygen -A \
-    && chown stacloud:stacloud /etc/shadow /etc/ssh/ssh_host_*_key \
-    && chmod 600 /etc/shadow /etc/ssh/ssh_host_*_key \
+    && chmod 755 /run/sshd /var/run/sshd \
+    && chmod 666 /etc/passwd /etc/group /etc/shadow \
     && { grep -qxF /usr/local/bin/stacloud-ssh-shell /etc/shells || echo /usr/local/bin/stacloud-ssh-shell >> /etc/shells; }
 
 USER stacloud
